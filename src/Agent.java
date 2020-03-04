@@ -26,6 +26,8 @@ public class Agent {
 
 	public HashMap<String, Float> realValue = new HashMap<>();
 
+	public HashMap<String, Integer> timesExecuted = new HashMap<>();
+
 	public String taskChosen = null;
 
 	public float total = 0;
@@ -50,10 +52,22 @@ public class Agent {
 			float utilityValue = Float.parseFloat(values[1].split("=")[1]);
 
 			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen, expectedValue.get(this.taskChosen), utilityValue));
-			//Updates utility value of task
-			this.expectedValue.replace(this.taskChosen, utilityValue);
-			this.realValue.replace(this.taskChosen, utilityValue);
 
+
+			//Updates utility value of task
+			float currentRealValue = this.realValue.get(this.taskChosen);
+			if(currentRealValue == Float.NEGATIVE_INFINITY){
+				this.realValue.replace(this.taskChosen, utilityValue);
+			}
+			else{
+				this.realValue.replace(this.taskChosen, currentRealValue+utilityValue);
+			}
+
+			int totalTimes = this.timesExecuted.get(this.taskChosen)+1;
+
+			this.timesExecuted.replace(this.taskChosen, totalTimes);
+
+			this.expectedValue.replace(this.taskChosen, this.realValue.get(this.taskChosen)/totalTimes);
 
 			this.total += utilityValue;
 			if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Total value: %.2f", this.total));
@@ -62,8 +76,9 @@ public class Agent {
 		else{
 			//Gets value from tasks of type TX u=Y
 			this.expectedValue.put(values[0], Float.parseFloat(values[1].split("=")[1]));
-			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Value: %.2f",values[0], Float.parseFloat(values[1].split("=")[1])));
+			//if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Value: %.2f",values[0], Float.parseFloat(values[1].split("=")[1])));
 			this.realValue.put(values[0], Float.NEGATIVE_INFINITY);
+			this.timesExecuted.put(values[0], 0);
 
 		}
 	}
@@ -106,8 +121,7 @@ public class Agent {
 				maxValue = currentvalue;
 				taskChosen = key;
 			}
-
-			else if (currentvalue == maxValue && this.taskChosen.compareTo(key) > 0){
+			else if (currentvalue == maxValue && taskChosen.compareTo(key) > 0){
 				taskChosen = key;
 			}
 		}
@@ -157,13 +171,12 @@ public class Agent {
 	public String getOutput(){
 		String output = "state={";
 
-		List<String> list = new ArrayList<>(this.realValue.keySet());
+		List<String> list = new ArrayList<>(this.expectedValue.keySet());
 		//sort list of Tasks
 		java.util.Collections.sort(list);
 		for (String key: list) {
-			float currentValue = this.realValue.get(key);
-			if(currentValue != Float.NEGATIVE_INFINITY){
-				output = output.concat(String.format(Locale.US, "%s=%.2f,",key, currentValue));
+			if(this.timesExecuted.get(key) != 0){
+				output = output.concat(String.format(Locale.US, "%s=%.2f,",key, this.expectedValue.get(key)));
 			}
 
 			else {

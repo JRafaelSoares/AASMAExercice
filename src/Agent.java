@@ -1,7 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Dictionary;
+import java.util.Map;
 
 public class Agent {
 
@@ -11,11 +11,27 @@ public class Agent {
 	/**********************************/
 	public int cycle;
 
-	public Dictionary<String, Integer> Tasks;
+	public int restart = 0;
 
-	public Agent(String[] options) {}
+	public double memoryFactor = 0.0;
+
+	public String decision;
+
+	public Map<String, Double> tasks;
+
+	public Agent(String[] options) {
+		for (String option: options) {
+			initializationParse(option.split("="));
+		}
+	}
 	
-	public void perceive(String input) {}
+	public void perceive(String input) {
+		String[] values = input.split(" ");
+
+		//if(values[0].compareTo("A")){
+
+		//}
+	}
 	
 	public void decideAndAct() {}
 	
@@ -38,5 +54,26 @@ public class Agent {
 		}
 		System.out.println(agent.recharge());
 		br.close();
+	}
+
+	/******************************/
+	/******* C: AUX FUNCTIONS******/
+	/******************************/
+
+	public void initializationParse(String[] initialization){
+		switch (initialization[0]){
+			case "cycle":
+				this.cycle= Integer.parseInt(initialization[1]);
+				break;
+			case "decision":
+				this.decision = initialization[1];
+				break;
+			case "restart":
+				this.restart = Integer.parseInt(initialization[1]);
+				break;
+			case "memory-factor":
+				this.memoryFactor = Double.parseDouble(initialization[1]);
+				break;
+		}
 	}
 }

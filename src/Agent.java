@@ -26,7 +26,7 @@ public class Agent {
 
 	public HashMap<String, Float> realValue = new HashMap<>();
 
-	public String taskChosen;
+	public String taskChosen = null;
 
 	public float total = 0;
 
@@ -34,7 +34,7 @@ public class Agent {
 	/******** A.2: Debugging  *********/
 	/**********************************/
 
-	public boolean debugging = false;
+	public boolean debugging = true;
 
 	public Agent(String[] options) {
 		for (String option: options) {
@@ -49,25 +49,26 @@ public class Agent {
 			//TODO - Case with multiple utilities for multiple tasks?
 			float utilityValue = Float.parseFloat(values[1].split("=")[1]);
 
-			if(debugging) System.out.println(String.format(Locale.US,"Old value: %.1f New Value: %.1f", expectedValue.get(taskChosen), utilityValue));
+			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen, expectedValue.get(this.taskChosen), utilityValue));
 			//Updates utility value of task
-			this.expectedValue.replace(taskChosen, utilityValue);
-			this.realValue.replace(taskChosen, utilityValue);
+			this.expectedValue.replace(this.taskChosen, utilityValue);
+			this.realValue.replace(this.taskChosen, utilityValue);
 
 
-			total+= utilityValue;
+			this.total += utilityValue;
+			if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Total value: %.2f", this.total));
 		}
 
 		else{
 			//Gets value from tasks of type TX u=Y
 			this.expectedValue.put(values[0], Float.parseFloat(values[1].split("=")[1]));
-			if(debugging) System.out.println(String.format(Locale.US,"Task: %s Value: %.1f",values[0], Float.parseFloat(values[1].split("=")[1])));
+			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Value: %.2f",values[0], Float.parseFloat(values[1].split("=")[1])));
 			this.realValue.put(values[0], Float.NEGATIVE_INFINITY);
 
 		}
 	}
 	
-	public void decideAndAct() { maxUtil(); }
+	public void decideAndAct() { this.taskChosen = maxUtilRestart(); cycle--; }
 	
 	public String recharge() { return getOutput(); }
 
@@ -94,24 +95,42 @@ public class Agent {
 	/**** C: UTILITY FUNCTIONS*****/
 	/******************************/
 	
-	public void maxUtil(){
+	public String maxUtil(){
+		String taskChosen = "blank";
+
 		float maxValue = Float.NEGATIVE_INFINITY;
 		float currentvalue;
-
 		for (String key: this.expectedValue.keySet()) {
 			currentvalue = this.expectedValue.get(key);
 			if (currentvalue > maxValue){
 				maxValue = currentvalue;
-				this.taskChosen = key;
+				taskChosen = key;
 			}
 
-			//TODO - Check if compareTo is correct
 			else if (currentvalue == maxValue && this.taskChosen.compareTo(key) > 0){
-				this.taskChosen = key;
+				taskChosen = key;
 			}
 		}
 
-		if(debugging) System.out.println(String.format(Locale.US,"Chosen task: %s Expected value: %.1f", this.taskChosen, maxValue));
+		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Chosen task: %s Expected value: %.2f", taskChosen, maxValue));
+		return taskChosen;
+	}
+
+	public String maxUtilRestart(){
+		String maxUtilTask = maxUtil();
+		if(this.taskChosen == null || this.restart == 0 || this.taskChosen.equals(maxUtilTask)){
+			return maxUtilTask;
+		}
+
+		else{
+			if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
+			if(this.expectedValue.get(maxUtilTask) * (this.cycle-restart) > this.expectedValue.get(this.taskChosen)*this.cycle ){
+				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New maxUtilTask: %.2f Old maxUtilTask: %.2f", this.expectedValue.get(maxUtilTask) * (this.cycle-restart), this.expectedValue.get(this.taskChosen)*this.cycle));
+
+				return maxUtilTask;
+			}
+			else return this.taskChosen;
+		}
 	}
 	
 	/******************************/
@@ -144,7 +163,7 @@ public class Agent {
 		for (String key: list) {
 			float currentValue = this.realValue.get(key);
 			if(currentValue != Float.NEGATIVE_INFINITY){
-				output = output.concat(String.format(Locale.US, "%s=%.1f,",key, currentValue));
+				output = output.concat(String.format(Locale.US, "%s=%.2f,",key, currentValue));
 			}
 
 			else {
@@ -154,7 +173,7 @@ public class Agent {
 		//Removes last ","
 		output = output.substring(0, output.length()-1);
 
-		return output.concat(String.format(Locale.US,"} gain=%.1f", this.total));
+		return output.concat(String.format(Locale.US,"} gain=%.2f", this.total));
 
 	}
 }

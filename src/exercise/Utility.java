@@ -38,19 +38,6 @@ public class Utility {
         this.expectedValue = value / totalTime;
 
         this.timesExecuted++;
-
-        /*
-                //Old implementation
-        if(this.totalValue == Float.NEGATIVE_INFINITY){
-            this.totalValue = utility;
-        }
-        else{
-            this.totalValue += utility;
-        }
-
-
-        this.expectedValue = this.totalValue/this.timesExecuted;
-        */
     }
 
     public Double getExpectedValue(){

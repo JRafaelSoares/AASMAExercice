@@ -83,7 +83,11 @@ public class Agent {
 		}
 	}
 	
-	public void decideAndAct() { this.taskChosen = maxUtilRestart(); cycle--; }
+	public void decideAndAct() {
+		this.taskChosen = maxUtilRestart();
+		cycle--;
+		if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Chosen Task: %s", this.taskChosen));
+	}
 	
 	public String recharge() { return getOutput(); }
 
@@ -126,7 +130,7 @@ public class Agent {
 			}
 		}
 
-		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Chosen task: %s Expected value: %.2f", taskChosen, maxValue));
+		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Max task: %s Expected value: %.2f", taskChosen, maxValue));
 		return taskChosen;
 	}
 
@@ -137,12 +141,17 @@ public class Agent {
 		}
 
 		else{
-			if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
-			if(this.expectedValue.get(maxUtilTask) * (this.cycle-restart) > this.expectedValue.get(this.taskChosen)*this.cycle ){
-				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New maxUtilTask: %.2f Old maxUtilTask: %.2f", this.expectedValue.get(maxUtilTask) * (this.cycle-restart), this.expectedValue.get(this.taskChosen)*this.cycle));
+
+			System.out.println(String.format(Locale.US, "[RESTART] Max Task value: %.2f  Current Task value: %.2f", this.expectedValue.get(maxUtilTask) * (this.cycle-restart), this.expectedValue.get(this.taskChosen)*this.cycle));
+			//TODO - IS THIS EVEN RIGHT? cycle-restart+1
+			if(this.expectedValue.get(maxUtilTask) * (this.cycle-restart+1) > this.expectedValue.get(this.taskChosen)*this.cycle ){
+				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
 
 				return maxUtilTask;
 			}
+			//TODO - Check if necessary
+			//else if(this.expectedValue.get(maxUtilTask) * (this.cycle-restart) == this.expectedValue.get(this.taskChosen)*this.cycle && maxUtilTask.compareTo(this.taskChosen) > 0) return maxUtilTask;
+
 			else return this.taskChosen;
 		}
 	}

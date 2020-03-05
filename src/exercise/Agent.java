@@ -1,3 +1,5 @@
+package exercise;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,11 +24,8 @@ public class Agent {
 	/**********************************/
 	/*** A.1: Task Implementation *****/
 	/**********************************/
-	public HashMap<String, Float> expectedValue = new HashMap<>();
 
-	public HashMap<String, Float> realValue = new HashMap<>();
-
-	public HashMap<String, Integer> timesExecuted = new HashMap<>();
+	public HashMap<String, Utility> utilityValues = new HashMap<>();
 
 	public String taskChosen = null;
 
@@ -51,35 +50,16 @@ public class Agent {
 			//TODO - Case with multiple utilities for multiple tasks?
 			float utilityValue = Float.parseFloat(values[1].split("=")[1]);
 
-			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen, expectedValue.get(this.taskChosen), utilityValue));
+			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen,this.utilityValues.get(this.taskChosen).getExpectedValue(), utilityValue));
 
-
-			//Updates utility value of task
-			float currentRealValue = this.realValue.get(this.taskChosen);
-			if(currentRealValue == Float.NEGATIVE_INFINITY){
-				this.realValue.replace(this.taskChosen, utilityValue);
-			}
-			else{
-				this.realValue.replace(this.taskChosen, currentRealValue+utilityValue);
-			}
-
-			int totalTimes = this.timesExecuted.get(this.taskChosen)+1;
-
-			this.timesExecuted.replace(this.taskChosen, totalTimes);
-
-			this.expectedValue.replace(this.taskChosen, this.realValue.get(this.taskChosen)/totalTimes);
+			this.utilityValues.get(this.taskChosen).addObservation(utilityValue);
 
 			this.total += utilityValue;
 			if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Total value: %.2f", this.total));
 		}
 
 		else{
-			//Gets value from tasks of type TX u=Y
-			this.expectedValue.put(values[0], Float.parseFloat(values[1].split("=")[1]));
-			//if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Value: %.2f",values[0], Float.parseFloat(values[1].split("=")[1])));
-			this.realValue.put(values[0], Float.NEGATIVE_INFINITY);
-			this.timesExecuted.put(values[0], 0);
-
+			this.utilityValues.put(values[0], new Utility(Float.parseFloat(values[1].split("=")[1])));
 		}
 	}
 	
@@ -118,14 +98,14 @@ public class Agent {
 		String taskChosen = "blank";
 
 		float maxValue = Float.NEGATIVE_INFINITY;
-		float currentvalue;
-		for (String key: this.expectedValue.keySet()) {
-			currentvalue = this.expectedValue.get(key);
-			if (currentvalue > maxValue){
-				maxValue = currentvalue;
+		float currentValue;
+		for (String key: this.utilityValues.keySet()) {
+			currentValue = this.utilityValues.get(key).getExpectedValue();
+			if (currentValue > maxValue){
+				maxValue = currentValue;
 				taskChosen = key;
 			}
-			else if (currentvalue == maxValue && taskChosen.compareTo(key) > 0){
+			else if (currentValue == maxValue && taskChosen.compareTo(key) > 0){
 				taskChosen = key;
 			}
 		}
@@ -142,9 +122,9 @@ public class Agent {
 
 		else{
 
-			System.out.println(String.format(Locale.US, "[RESTART] Max Task value: %.2f  Current Task value: %.2f", this.expectedValue.get(maxUtilTask) * (this.cycle-restart), this.expectedValue.get(this.taskChosen)*this.cycle));
+			System.out.println(String.format(Locale.US, "[RESTART] Max Task value: %.2f  Current Task value: %.2f", this.utilityValues.get(maxUtilTask).getExpectedValue() * (this.cycle-restart), this.utilityValues.get(this.taskChosen).getExpectedValue()*this.cycle));
 			//TODO - IS THIS EVEN RIGHT? cycle-restart+1
-			if(this.expectedValue.get(maxUtilTask) * (this.cycle-restart+1) > this.expectedValue.get(this.taskChosen)*this.cycle ){
+			if(this.utilityValues.get(maxUtilTask).getExpectedValue() * (this.cycle-restart+1) > this.utilityValues.get(this.taskChosen).getExpectedValue()*this.cycle ){
 				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
 
 				return maxUtilTask;
@@ -180,12 +160,13 @@ public class Agent {
 	public String getOutput(){
 		String output = "state={";
 
-		List<String> list = new ArrayList<>(this.expectedValue.keySet());
+		List<String> list = new ArrayList<>(this.utilityValues.keySet());
 		//sort list of Tasks
 		java.util.Collections.sort(list);
 		for (String key: list) {
-			if(this.timesExecuted.get(key) != 0){
-				output = output.concat(String.format(Locale.US, "%s=%.2f,",key, this.expectedValue.get(key)));
+			Utility currentUtil = this.utilityValues.get(key);
+			if(currentUtil.getTimesExecuted() != 0){
+				output = output.concat(String.format(Locale.US, "%s=%.2f,",key, currentUtil.getExpectedValue()));
 			}
 
 			else {

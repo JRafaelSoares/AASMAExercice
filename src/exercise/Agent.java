@@ -17,7 +17,7 @@ public class Agent {
 
 	public int restart = 0;
 
-	public float memoryFactor = 0;
+	public double memoryFactor = 0;
 
 	public String decision;
 
@@ -29,7 +29,9 @@ public class Agent {
 
 	public String taskChosen = null;
 
-	public float total = 0;
+	public double total = 0;
+
+	public int cyclesPassed = 0;
 
 	/**********************************/
 	/******** A.2: Debugging  *********/
@@ -48,24 +50,25 @@ public class Agent {
 
 		if(values[0].equals("A")){
 			//TODO - Case with multiple utilities for multiple tasks?
-			float utilityValue = Float.parseFloat(values[1].split("=")[1]);
+			double utilityValue = Float.parseFloat(values[1].split("=")[1]);
 
 			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen,this.utilityValues.get(this.taskChosen).getExpectedValue(), utilityValue));
 
-			this.utilityValues.get(this.taskChosen).addObservation(utilityValue);
+			this.utilityValues.get(this.taskChosen).addObservation(utilityValue, this.cyclesPassed);
 
 			this.total += utilityValue;
 			if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Total value: %.2f", this.total));
 		}
 
 		else{
-			this.utilityValues.put(values[0], new Utility(Float.parseFloat(values[1].split("=")[1])));
+			this.utilityValues.put(values[0], new Utility(Double.parseDouble(values[1].split("=")[1]), this.memoryFactor));
 		}
 	}
 	
 	public void decideAndAct() {
 		this.taskChosen = maxUtilRestart();
-		cycle--;
+		this.cycle--;
+		this.cyclesPassed++;
 		if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Chosen Task: %s", this.taskChosen));
 	}
 	
@@ -97,8 +100,8 @@ public class Agent {
 	public String maxUtil(){
 		String taskChosen = "blank";
 
-		float maxValue = Float.NEGATIVE_INFINITY;
-		float currentValue;
+		double maxValue = Float.NEGATIVE_INFINITY;
+		double currentValue;
 		for (String key: this.utilityValues.keySet()) {
 			currentValue = this.utilityValues.get(key).getExpectedValue();
 			if (currentValue > maxValue){

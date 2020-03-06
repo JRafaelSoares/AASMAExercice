@@ -33,6 +33,8 @@ public class Agent {
 
 	public int cyclesPassed = 0;
 
+	public int currentRestart = 0;
+
 	/**********************************/
 	/******** A.2: Debugging  *********/
 	/**********************************/
@@ -66,7 +68,11 @@ public class Agent {
 	}
 	
 	public void decideAndAct() {
+		//TODO - NOT SURE IF HERE OR BEFORE
+		if(this.currentRestart > 0) this.currentRestart--;
+
 		this.taskChosen = maxUtilRestart();
+
 		this.cycle--;
 		this.cyclesPassed++;
 		if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Chosen Task: %s", this.taskChosen));
@@ -125,14 +131,14 @@ public class Agent {
 
 		else{
 
-			if(debugging) System.out.println(String.format(Locale.US, "[RESTART] Max Task value: %.2f  Current Task value: %.2f", this.utilityValues.get(maxUtilTask).getExpectedValue() * (this.cycle-restart), this.utilityValues.get(this.taskChosen).getExpectedValue()*this.cycle));
 
-			double maxUtilRestartValue = calculateRestart(this.utilityValues.get(maxUtilTask), this.restart-1);
-			double currentUtilValue = calculateRestart(this.utilityValues.get(this.taskChosen), 0);
+			double maxUtilRestartValue =  this.utilityValues.get(maxUtilTask).simulateRestart(this.cyclesPassed, cycle, this.restart);   //calculateRestart(this.utilityValues.get(maxUtilTask), this.restart-1);
+			double currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(this.cyclesPassed, cycle, this.currentRestart);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
+			if(debugging) System.out.println(String.format(Locale.US, "[RESTART] Max Task value: %.2f  Current Task value: %.2f", maxUtilRestartValue, currentUtilValue));
 
 			if( maxUtilRestartValue > currentUtilValue){
 				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
-
+				this.currentRestart = this.restart;
 				return maxUtilTask;
 			}
 
@@ -177,7 +183,7 @@ public class Agent {
 		java.util.Collections.sort(list);
 		for (String key: list) {
 			Utility currentUtil = this.utilityValues.get(key);
-			if(currentUtil.getTimesExecuted() != 0){
+			if(!currentUtil.wasNotExecuted()){
 				output = output.concat(String.format(Locale.US, "%s=%.2f,",key, currentUtil.getExpectedValue()));
 			}
 

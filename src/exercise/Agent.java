@@ -52,10 +52,8 @@ public class Agent {
 		String[] values = input.split(" ");
 
 		if(values[0].equals("A")){
-			//TODO - Case with multiple utilities for multiple tasks?
-			double utilityValue = Float.parseFloat(values[1].split("=")[1]);
-
-			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen,this.utilityValues.get(this.taskChosen).getExpectedValue(), utilityValue));
+			double utilityValue = Double.parseDouble(values[1].split("=")[1]);
+			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen, this.utilityValues.get(this.taskChosen).getExpectedValue(), utilityValue));
 
 			this.utilityValues.get(this.taskChosen).addObservation(utilityValue, this.cyclesPassed);
 
@@ -155,7 +153,12 @@ public class Agent {
 	}
 
 	public String getOutput(){
-		String output = "state={";
+		return String.format(Locale.US,"state={%s} gain=%.2f", getTaskValues(), this.total);
+
+	}
+
+	public String getTaskValues(){
+		String output = "";
 
 		List<String> list = new ArrayList<>(this.utilityValues.keySet());
 		//sort list of Tasks
@@ -171,9 +174,10 @@ public class Agent {
 			}
 		}
 		//Removes last ","
-		output = output.substring(0, output.length()-1);
+		return output.substring(0, output.length()-1);
+	}
 
-		return output.concat(String.format(Locale.US,"} gain=%.2f", this.total));
-
+	public double getTotal(){
+		return this.total;
 	}
 }

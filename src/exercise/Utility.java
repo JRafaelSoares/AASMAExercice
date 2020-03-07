@@ -45,8 +45,6 @@ public class Utility {
     }
 
     public Double getValuesExpectedValue(HashMap<Integer, Double> observedValues){
-        if(observedValues.isEmpty()) ;
-
         double totalTime = 0;
 
         double value = 0;

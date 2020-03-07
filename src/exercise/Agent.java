@@ -41,10 +41,11 @@ public class Agent {
 
 	public boolean debugging = true;
 
-	public Agent(String[] options) {
+	public Agent(String[] options, boolean debugging) {
 		for (String option: options) {
 			initializationParse(option.split("="));
 		}
+		this.debugging = debugging;
 	}
 	
 	public void perceive(String input) {
@@ -68,9 +69,7 @@ public class Agent {
 	}
 	
 	public void decideAndAct() {
-		//TODO - NOT SURE IF HERE OR BEFORE
 		if(this.currentRestart > 0) this.currentRestart--;
-
 		this.taskChosen = maxUtilRestart();
 
 		this.cycle--;
@@ -81,23 +80,7 @@ public class Agent {
 	public String recharge() { return getOutput(); }
 
 	
-	/******************************/
-	/******* B: MAIN UTILS ********/
-	/******************************/
 
-    public static void main(String[] args) throws IOException { 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String line = br.readLine();
-		Agent agent = new Agent(line.split(" "));
-		while(!(line=br.readLine()).startsWith("end")) {
-			//DEBUGGING
-			if(agent.debugging) System.out.println(line);
-			if(line.startsWith("TIK")) agent.decideAndAct();
-			else agent.perceive(line);
-		}
-		System.out.println(agent.recharge());
-		br.close();
-	}
 
 	/******************************/
 	/**** C: UTILITY FUNCTIONS*****/
@@ -148,10 +131,6 @@ public class Agent {
 
 			else return this.taskChosen;
 		}
-	}
-
-	public double calculateRestart(Utility utility, int restart){
-		return utility.getExpectedValue() * (this.cycle - restart);
 	}
 	
 	/******************************/

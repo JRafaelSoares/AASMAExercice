@@ -23,44 +23,28 @@ public class Utility {
 
         observedValues.put(cycle, utility);
 
-        ArrayList<Double> values = getValuesExpectedValue(this.observedValues);
-
-        this.expectedValue = values.get(0) / values.get(1);
+        this.expectedValue = getValuesExpectedValue(this.observedValues);
     }
 
-    public Double simulateRestart(int currentCycle, int remainingCycles, int restart){
+    public Double simulateRestart(int remainingCycles, int restart){
 
+        Double expectedValue;
         if(restart >= remainingCycles) return 0.0;
 
-        //Get current observed values
-        ArrayList<Double> values = getValuesExpectedValue(observedValues);
-        Double currentSumValues = values.get(0);
-        Double currentTotalTime = values.get(1);
-        Double currentExpectedValue;
-
-        if(currentTotalTime != 0){
-            currentExpectedValue = currentSumValues/currentTotalTime;
+        if(!observedValues.isEmpty()){
+            expectedValue = getValuesExpectedValue(observedValues);
         }
         //If no observed value yet, we use the base expected value
         else{
-            currentExpectedValue = this.expectedValue;
+            expectedValue = this.expectedValue;
         }
 
-        int cycle = currentCycle + restart;
-
-        Double totalValue = 0.0;
-        //Calculates iterations of future results
-        for(int i = remainingCycles-restart; i > 0; i--){
-            totalValue += currentExpectedValue* Math.pow(cycle, this.memory);
-            cycle++;
-        }
-
-        return totalValue;
+        return expectedValue*(remainingCycles-restart);
 
 
     }
 
-    public ArrayList<Double> getValuesExpectedValue(HashMap<Integer, Double> observedValues){
+    public Double getValuesExpectedValue(HashMap<Integer, Double> observedValues){
         if(observedValues.isEmpty()) ;
 
         double totalTime = 0;
@@ -75,12 +59,7 @@ public class Utility {
             totalTime += memoryTime;
         }
 
-        ArrayList<Double> values = new ArrayList<>();
-
-        values.add(value);
-        values.add(totalTime);
-
-        return values;
+        return value / totalTime;
     }
 
     public Double getExpectedValue(){

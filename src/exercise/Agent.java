@@ -132,12 +132,12 @@ public class Agent {
 		else{
 
 
-			double maxUtilRestartValue =  this.utilityValues.get(maxUtilTask).simulateRestart(this.cyclesPassed, cycle, this.restart);   //calculateRestart(this.utilityValues.get(maxUtilTask), this.restart-1);
-			double currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(this.cyclesPassed, cycle, this.currentRestart);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
-			if(debugging) System.out.println(String.format(Locale.US, "[RESTART] Max Task value: %.2f  Current Task value: %.2f", maxUtilRestartValue, currentUtilValue));
+			double maxUtilRestartValue =  this.utilityValues.get(maxUtilTask).simulateRestart(cycle, this.restart);   //calculateRestart(this.utilityValues.get(maxUtilTask), this.restart-1);
+			double currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(cycle, this.currentRestart);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
+			if(debugging) System.out.println(String.format(Locale.US, "[RESTART] New Task Total Value: %.2f  Current Task Total Value: %.2f", maxUtilRestartValue, currentUtilValue));
 
 			if( maxUtilRestartValue > currentUtilValue){
-				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
+				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Current Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
 				this.currentRestart = this.restart;
 				return maxUtilTask;
 			}

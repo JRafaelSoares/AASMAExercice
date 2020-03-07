@@ -47,24 +47,17 @@ public class Utility {
         }
 
         int cycle = currentCycle + restart;
-        double auxTime;
 
-        Double totalValue = currentExpectedValue;
+        Double totalValue = 0.0;
         //Calculates iterations of future results
         for(int i = remainingCycles-restart; i > 0; i--){
-
-            auxTime = Math.pow(cycle, this.memory);
-            currentSumValues += currentExpectedValue*auxTime;
-
-            currentTotalTime += auxTime;
-
-            currentExpectedValue = currentSumValues/currentTotalTime;
-
-            totalValue += currentExpectedValue;
+            totalValue += currentExpectedValue* Math.pow(cycle, this.memory);
             cycle++;
         }
 
         return totalValue;
+
+
     }
 
     public ArrayList<Double> getValuesExpectedValue(HashMap<Integer, Double> observedValues){

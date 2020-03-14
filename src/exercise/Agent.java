@@ -35,6 +35,10 @@ public class Agent {
 
 	public int currentRestart = 0;
 
+	public String proposedTask = null;
+
+	public ArrayList<Utility> orderedUtilityValues = new ArrayList<>();
+
 	/**********************************/
 	/******** A.2: Debugging  *********/
 	/**********************************/
@@ -71,16 +75,21 @@ public class Agent {
 		act();
 	}
 
-	public void decide(){
-		String newTask = maxUtilRestart().get(0).getTask();
+	public ArrayList<Utility> decide(){
+		this.orderedUtilityValues = maxUtilRestart();
 
-		if(!newTask.equals(this.taskChosen)){
-			this.currentRestart = this.restart;
-			this.taskChosen = newTask;
-		}
+		this.proposedTask = this.orderedUtilityValues.get(0).getTask();
+
+		return this.orderedUtilityValues;
 	}
 
 	public void act(){
+
+		if(!this.proposedTask.equals(this.taskChosen)){
+			this.currentRestart = this.restart;
+			this.taskChosen = this.proposedTask;
+		}
+
 		this.cycle--;
 		this.cyclesPassed++;
 		if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Chosen Task: %s", this.taskChosen));
@@ -245,5 +254,13 @@ public class Agent {
 
 	public double getTotal(){
 		return this.total;
+	}
+
+	public ArrayList<Utility> getOrderedUtilityValues(){
+		return this.orderedUtilityValues;
+	}
+
+	public void setProposedTask(String task){
+		this.proposedTask = task;
 	}
 }

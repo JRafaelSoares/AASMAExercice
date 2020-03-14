@@ -3,6 +3,8 @@ package exercise;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -48,8 +50,124 @@ public class Environment {
     /**********************************/
 
     public void decideAndAct(){
-        for (String agent: agents.keySet()) {
-            agents.get(agent).decideAndAct();
+
+        if(concurrencyPenalty == 0){
+            for (String agent: agents.keySet()) {
+                agents.get(agent).decideAndAct();
+            }
+        }
+
+        else {
+            ArrayList<Utility> utilities = new ArrayList<>();
+            ArrayList<String> tasks = new ArrayList<>();
+
+
+            ArrayList<ArrayList<Utility>> allUtilities = new ArrayList<>();
+            for (String agent: agents.keySet()) {
+                ArrayList<Utility> maxUtils = agents.get(agent).decide();
+                allUtilities.add(maxUtils);
+
+                utilities.add(maxUtils.get(0));
+                tasks.add(maxUtils.get(0).getTask());
+            }
+
+            ArrayList<String> tasksCopy = (ArrayList<String>) tasks.clone();
+
+            while (true){
+                //starting from the last agent
+                for(int i = agentNames.length-1; i>= 0; i--){
+                    //if a task happens more than once
+                    if(debugging) System.out.println(String.format("[CONCURRENCY] Im agent: A%d", i));
+                    if(debugging) System.out.println(String.format("[CONCURRENCY] Number of repeats: %d", Collections.frequency(tasks, tasks.get(i))));
+
+                    int numAgentsSameTask = Collections.frequency(tasks, tasks.get(i));
+                    if(numAgentsSameTask > 1){
+                        if(debugging) System.out.println(String.format("[CONCURRENCY] Repeated Task: %s", tasks.get(i)));
+                        //looking for other agent with same task
+                        for(int j = 0; j < agentNames.length; j++){
+                            //found an agent with same task which is not myself
+                            if(tasks.get(j).equals(tasks.get(i)) && j!=i){
+                                if(debugging) System.out.println(String.format("[CONCURRENCY] Agent with same task: A%d", j));
+                                if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] A%d Value: %.2f, A%d Value: %.2f", i, utilities.get(i).getExpectedValue(), j, utilities.get(j).getExpectedValue()));
+
+                                //if my expected value is less or equal to the other, need to see if I have another better value in store
+                                if(utilities.get(i).getExpectedValue() <= utilities.get(j).getExpectedValue()){
+                                    //Local maximum variables
+                                    String maxTask = tasks.get(i);
+                                    Double maxUtility = utilities.get(i).getExpectedValue();
+
+                                    //Used to obtain utility later on
+                                    int currentUtilityPosition = -1;
+                                    int maxUtilityPosition = -1;
+                                    for(Utility utility : allUtilities.get(i)){
+                                        currentUtilityPosition++;
+                                        //if it is a task that no one has taken
+                                        //And if the value is bigger than my utility - discount for each other agent
+                                        if(debugging) {
+                                            if(!tasks.contains(utility.getTask())){
+                                                System.out.println(String.format(Locale.US, "[CONCURRENCY] Max Task Utility: %.2f, Current Task Utility: %.2f", utilities.get(i).getExpectedValue()-(this.concurrencyPenalty*numAgentsSameTask), utility.getExpectedValue()));
+                                            }
+                                        }
+
+                                        if(!tasks.contains(utility.getTask()) && isWorthChange(utilities.get(i).getExpectedValue(), utility.getExpectedValue(), numAgentsSameTask)){
+                                            //if it isnt the first value higher
+                                            if(!maxTask.equals(utilities.get(i).getTask())){
+                                                if(utility.getExpectedValue() > maxUtility){
+                                                    if(debugging) System.out.println(String.format("[CONCURRENCY] Found new higher task: %s", utility.getTask() ));
+                                                    if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] New Task: %s, New Utility: %.2f", utility.getTask(), utility.getExpectedValue()));
+
+                                                    maxTask = utility.getTask();
+                                                    maxUtility = utility.getExpectedValue();
+                                                    maxUtilityPosition = currentUtilityPosition;
+                                                }
+                                            }
+                                            //if it is the first time finding a value, set local maximums
+                                            else {
+                                                if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] New Task: %s, New Utility: %.2f", utility.getTask(), utility.getExpectedValue()));
+
+                                                maxTask = utility.getTask();
+                                                maxUtility = utility.getExpectedValue();
+                                                maxUtilityPosition = currentUtilityPosition;
+
+                                            }
+
+                                        }
+                                    }
+                                    //Set new maximums (which might not have changed)
+                                    if(maxUtilityPosition != -1){
+                                        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] Final Task Chosen: %s", maxTask));
+
+                                        tasks.set(i, maxTask);
+                                        utilities.set(i, allUtilities.get(i).get(maxUtilityPosition));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                //If no changes were made, exit
+                if(tasksCopy.equals(tasks)){
+                    break;
+                }
+
+                tasksCopy = (ArrayList<String>)tasks.clone();
+            }
+
+            for(int i = 0; i < agentNames.length; i++){
+                Agent agent = agents.get(agentNames[i]);
+                agent.setProposedTask(tasks.get(i));
+                agent.act();
+            }
+        }
+
+    }
+
+    public boolean isWorthChange(Double currentValue, Double tryingValue, int numberOfAgents){
+        if(numberOfAgents > 2){
+            return (numberOfAgents * (currentValue-this.concurrencyPenalty)) <= ( (numberOfAgents-1) * (currentValue-this.concurrencyPenalty) + tryingValue);
+        }
+        else{
+            return (numberOfAgents * (currentValue-this.concurrencyPenalty) <= (currentValue + tryingValue));
         }
     }
 

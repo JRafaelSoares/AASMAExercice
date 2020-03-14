@@ -1,0 +1,59 @@
+T0 u=5
+T1 u=-1
+TIK
+[RATIONALE] Max task: T0 Expected value: 5.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T0 Expected value: 5.00
+[RATIONALE] Chosen Task: T0
+A1 u=4
+[RATIONALE] Task: T0 Old value: 5.00 New Value: 4.00
+[RATIONALE] Total value: 4.00
+A2 u=-1
+[RATIONALE] Task: T0 Old value: 5.00 New Value: -1.00
+[RATIONALE] Total value: -1.00
+T2 u=-2
+TIK
+[RATIONALE] Max task: T0 Expected value: 4.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T0 Expected value: -1.00
+[RATIONALE] Chosen Task: T0
+A1 u=-1
+[RATIONALE] Task: T0 Old value: 4.00 New Value: -1.00
+[RATIONALE] Total value: 3.00
+T3 u=4
+TIK
+[RATIONALE] Max task: T3 Expected value: 4.00
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T3 Expected value: 4.00
+[RATIONALE] Chosen Task: T3
+A1 u=9
+[RATIONALE] Task: T3 Old value: 4.00 New Value: 9.00
+[RATIONALE] Total value: 12.00
+A2 u=3
+[RATIONALE] Task: T3 Old value: 4.00 New Value: 3.00
+[RATIONALE] Total value: 2.00
+T4 u=7
+T5 u=3
+TIK
+[RATIONALE] Max task: T3 Expected value: 9.00
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T4 Expected value: 7.00
+[RATIONALE] Chosen Task: T4
+A1 u=6
+[RATIONALE] Task: T3 Old value: 9.00 New Value: 6.00
+[RATIONALE] Total value: 18.00
+A2 u=5
+[RATIONALE] Task: T4 Old value: 7.00 New Value: 5.00
+[RATIONALE] Total value: 7.00
+TIK
+[RATIONALE] Max task: T3 Expected value: 7.50
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T4 Expected value: 5.00
+[RATIONALE] Chosen Task: T4
+A1 u=3
+[RATIONALE] Task: T3 Old value: 7.50 New Value: 3.00
+[RATIONALE] Total value: 21.00
+A2 u=2
+[RATIONALE] Task: T4 Old value: 5.00 New Value: 2.00
+[RATIONALE] Total value: 9.00
+state={A1={T0=1.50,T1=NA,T2=NA,T3=6.00,T4=NA,T5=NA},A2={T0=-1.00,T1=NA,T2=NA,T3=3.00,T4=3.50,T5=NA}} gain=30.00

@@ -6,6 +6,8 @@ import java.util.Locale;
 
 public class Utility {
 
+    public String task;
+
     public Double expectedValue;
 
     public HashMap<Integer, Double> observedValues = new HashMap<>();
@@ -14,9 +16,11 @@ public class Utility {
 
     public boolean debug = true;
 
-    public Utility(Double expectedValue, Double memory){
+
+    public Utility(Double expectedValue, Double memory, String task){
         this.expectedValue = expectedValue;
         this.memory = memory;
+        this.task = task;
     }
 
     public void addObservation(Double utility, int cycle){
@@ -65,4 +69,7 @@ public class Utility {
     }
 
     public boolean wasNotExecuted() { return observedValues.isEmpty(); }
+
+    public String getTask() { return this.task; }
+
 }

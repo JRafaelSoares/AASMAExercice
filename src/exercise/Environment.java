@@ -3,7 +3,6 @@ package exercise;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -17,7 +16,7 @@ public class Environment {
 
     public String decision;
 
-    public boolean debugging = false;
+    public boolean debugging = true;
 
     /******Homogeneous Variables******/
 
@@ -26,6 +25,8 @@ public class Environment {
     public int numAgents = 1;
 
     public int totalUtilitiesSeen = 0;
+
+    public double concurrencyPenalty = 0;
 
     public Environment(String[] options){
         initializationParse(options);
@@ -86,9 +87,6 @@ public class Environment {
                 agents.get(agent).perceive(line);
             }
         }
-
-
-
     }
 
     public String recharge(){
@@ -131,6 +129,9 @@ public class Environment {
                     else{
                         agentOptions = agentOptions.concat("decision=rationale ");
                     }
+                    break;
+                case "concurrency-penalty":
+                    this.concurrencyPenalty = Double.parseDouble(initialization[1]);
                     break;
                 default:
                     agentOptions = agentOptions.concat(option.concat(" "));

@@ -1,0 +1,66 @@
+T0 u=6
+T1 u=5
+TIK
+[RATIONALE] Max task: T0 Expected value: 6.00
+[RATIONALE] Chosen Task: T0
+A u=7
+[RATIONALE] Task: T0 Old value: 6.00 New Value: 7.00
+[RATIONALE] Total value: 7.00
+T2 u=5
+TIK
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+A u=4
+[RATIONALE] Task: T0 Old value: 7.00 New Value: 4.00
+[RATIONALE] Total value: 11.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 5.29
+[RATIONALE] Chosen Task: T0
+A u=4
+[RATIONALE] Task: T0 Old value: 5.29 New Value: 4.00
+[RATIONALE] Total value: 15.00
+T3 u=2
+T4 u=2
+TIK
+[RATIONALE] Max task: T1 Expected value: 5.00
+[RATIONALE] Chosen Task: T1
+A u=4
+[RATIONALE] Task: T1 Old value: 5.00 New Value: 4.00
+[RATIONALE] Total value: 19.00
+TIK
+[RATIONALE] Max task: T2 Expected value: 5.00
+[RATIONALE] Chosen Task: T2
+A u=5
+[RATIONALE] Task: T2 Old value: 5.00 New Value: 5.00
+[RATIONALE] Total value: 24.00
+TIK
+[RATIONALE] Max task: T2 Expected value: 5.00
+[RATIONALE] Chosen Task: T2
+A u=4
+[RATIONALE] Task: T2 Old value: 5.00 New Value: 4.00
+[RATIONALE] Total value: 28.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 4.77
+[RATIONALE] Chosen Task: T0
+A u=6
+[RATIONALE] Task: T0 Old value: 4.77 New Value: 6.00
+[RATIONALE] Total value: 34.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 5.22
+[RATIONALE] Chosen Task: T0
+A u=3
+[RATIONALE] Task: T0 Old value: 5.22 New Value: 3.00
+[RATIONALE] Total value: 37.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 4.61
+[RATIONALE] Chosen Task: T0
+A u=5
+[RATIONALE] Task: T0 Old value: 4.61 New Value: 5.00
+[RATIONALE] Total value: 42.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 4.69
+[RATIONALE] Chosen Task: T0
+A u=7
+[RATIONALE] Task: T0 Old value: 4.69 New Value: 7.00
+[RATIONALE] Total value: 49.00
+state={T0=5.13,T1=4.00,T2=4.48,T3=NA,T4=NA} gain=49.00

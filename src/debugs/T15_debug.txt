@@ -1,0 +1,431 @@
+T0 u=1
+T1 u=9
+TIK
+[RATIONALE] Max task: T1 Expected value: 9.00
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T1 Expected value: 9.00
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T1 Expected value: 9.00
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T1 Expected value: 9.00
+[RATIONALE] Chosen Task: T1
+A1 u=-2
+[RATIONALE] Task: T1 Old value: 9.00 New Value: -2.00
+[RATIONALE] Total value: -2.00
+A2 u=6
+[RATIONALE] Task: T1 Old value: 9.00 New Value: 6.00
+[RATIONALE] Total value: 6.00
+A3 u=-1
+[RATIONALE] Task: T1 Old value: 9.00 New Value: -1.00
+[RATIONALE] Total value: -1.00
+A4 u=6
+[RATIONALE] Task: T1 Old value: 9.00 New Value: 6.00
+[RATIONALE] Total value: 6.00
+T2 u=-2
+TIK
+[RATIONALE] Max task: T0 Expected value: 1.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T1 Expected value: 6.00
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T0 Expected value: 1.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T1 Expected value: 6.00
+[RATIONALE] Chosen Task: T1
+A1 u=9
+[RATIONALE] Task: T0 Old value: 1.00 New Value: 9.00
+[RATIONALE] Total value: 7.00
+A2 u=3
+[RATIONALE] Task: T1 Old value: 6.00 New Value: 3.00
+[RATIONALE] Total value: 9.00
+A3 u=1
+[RATIONALE] Task: T0 Old value: 1.00 New Value: 1.00
+[RATIONALE] Total value: 0.00
+A4 u=8
+[RATIONALE] Task: T1 Old value: 6.00 New Value: 8.00
+[RATIONALE] Total value: 14.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 9.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T1 Expected value: 4.50
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T0 Expected value: 1.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T1 Expected value: 7.00
+[RATIONALE] Chosen Task: T1
+A1 u=5
+[RATIONALE] Task: T0 Old value: 9.00 New Value: 5.00
+[RATIONALE] Total value: 12.00
+A2 u=-1
+[RATIONALE] Task: T1 Old value: 4.50 New Value: -1.00
+[RATIONALE] Total value: 8.00
+A3 u=-1
+[RATIONALE] Task: T0 Old value: 1.00 New Value: -1.00
+[RATIONALE] Total value: -1.00
+A4 u=-1
+[RATIONALE] Task: T1 Old value: 7.00 New Value: -1.00
+[RATIONALE] Total value: 13.00
+T3 u=2
+TIK
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T1 Expected value: 2.67
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T3 Expected value: 2.00
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T1 Expected value: 4.33
+[RATIONALE] Chosen Task: T1
+A1 u=8
+[RATIONALE] Task: T0 Old value: 7.00 New Value: 8.00
+[RATIONALE] Total value: 20.00
+A2 u=2
+[RATIONALE] Task: T1 Old value: 2.67 New Value: 2.00
+[RATIONALE] Total value: 10.00
+A3 u=3
+[RATIONALE] Task: T3 Old value: 2.00 New Value: 3.00
+[RATIONALE] Total value: 2.00
+A4 u=0
+[RATIONALE] Task: T1 Old value: 4.33 New Value: 0.00
+[RATIONALE] Total value: 13.00
+T4 u=6
+T5 u=8
+TIK
+[RATIONALE] Max task: T5 Expected value: 8.00
+[RATIONALE] Chosen Task: T5
+[RATIONALE] Max task: T5 Expected value: 8.00
+[RATIONALE] Chosen Task: T5
+[RATIONALE] Max task: T5 Expected value: 8.00
+[RATIONALE] Chosen Task: T5
+[RATIONALE] Max task: T5 Expected value: 8.00
+[RATIONALE] Chosen Task: T5
+A1 u=1
+[RATIONALE] Task: T5 Old value: 8.00 New Value: 1.00
+[RATIONALE] Total value: 21.00
+A2 u=-2
+[RATIONALE] Task: T5 Old value: 8.00 New Value: -2.00
+[RATIONALE] Total value: 8.00
+A3 u=5
+[RATIONALE] Task: T5 Old value: 8.00 New Value: 5.00
+[RATIONALE] Total value: 7.00
+A4 u=3
+[RATIONALE] Task: T5 Old value: 8.00 New Value: 3.00
+[RATIONALE] Total value: 16.00
+T6 u=0
+TIK
+[RATIONALE] Max task: T0 Expected value: 7.33
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RATIONALE] Chosen Task: T4
+A1 u=9
+[RATIONALE] Task: T0 Old value: 7.33 New Value: 9.00
+[RATIONALE] Total value: 30.00
+A2 u=3
+[RATIONALE] Task: T4 Old value: 6.00 New Value: 3.00
+[RATIONALE] Total value: 11.00
+A3 u=0
+[RATIONALE] Task: T4 Old value: 6.00 New Value: 0.00
+[RATIONALE] Total value: 7.00
+A4 u=9
+[RATIONALE] Task: T4 Old value: 6.00 New Value: 9.00
+[RATIONALE] Total value: 25.00
+T7 u=8
+TIK
+[RATIONALE] Max task: T7 Expected value: 8.00
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T7 Expected value: 8.00
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T7 Expected value: 8.00
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 9.00
+[RATIONALE] Chosen Task: T4
+A1 u=-1
+[RATIONALE] Task: T7 Old value: 8.00 New Value: -1.00
+[RATIONALE] Total value: 29.00
+A2 u=1
+[RATIONALE] Task: T7 Old value: 8.00 New Value: 1.00
+[RATIONALE] Total value: 12.00
+A3 u=8
+[RATIONALE] Task: T7 Old value: 8.00 New Value: 8.00
+[RATIONALE] Total value: 15.00
+A4 u=9
+[RATIONALE] Task: T4 Old value: 9.00 New Value: 9.00
+[RATIONALE] Total value: 34.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 7.75
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T4 Expected value: 3.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T7 Expected value: 8.00
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 9.00
+[RATIONALE] Chosen Task: T4
+A1 u=7
+[RATIONALE] Task: T0 Old value: 7.75 New Value: 7.00
+[RATIONALE] Total value: 36.00
+A2 u=7
+[RATIONALE] Task: T4 Old value: 3.00 New Value: 7.00
+[RATIONALE] Total value: 19.00
+A3 u=7
+[RATIONALE] Task: T7 Old value: 8.00 New Value: 7.00
+[RATIONALE] Total value: 22.00
+A4 u=-1
+[RATIONALE] Task: T4 Old value: 9.00 New Value: -1.00
+[RATIONALE] Total value: 33.00
+T8 u=2
+TIK
+[RATIONALE] Max task: T0 Expected value: 7.60
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T4 Expected value: 5.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T7 Expected value: 7.50
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T7 Expected value: 8.00
+[RATIONALE] Chosen Task: T7
+A1 u=0
+[RATIONALE] Task: T0 Old value: 7.60 New Value: 0.00
+[RATIONALE] Total value: 36.00
+A2 u=5
+[RATIONALE] Task: T4 Old value: 5.00 New Value: 5.00
+[RATIONALE] Total value: 24.00
+A3 u=7
+[RATIONALE] Task: T7 Old value: 7.50 New Value: 7.00
+[RATIONALE] Total value: 29.00
+A4 u=5
+[RATIONALE] Task: T7 Old value: 8.00 New Value: 5.00
+[RATIONALE] Total value: 38.00
+T9 u=7
+TIK
+[RATIONALE] Max task: T9 Expected value: 7.00
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T9 Expected value: 7.00
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 7.33
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T9 Expected value: 7.00
+[RATIONALE] Chosen Task: T9
+A1 u=4
+[RATIONALE] Task: T9 Old value: 7.00 New Value: 4.00
+[RATIONALE] Total value: 40.00
+A2 u=5
+[RATIONALE] Task: T9 Old value: 7.00 New Value: 5.00
+[RATIONALE] Total value: 29.00
+A3 u=-1
+[RATIONALE] Task: T7 Old value: 7.33 New Value: -1.00
+[RATIONALE] Total value: 28.00
+A4 u=5
+[RATIONALE] Task: T9 Old value: 7.00 New Value: 5.00
+[RATIONALE] Total value: 43.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 6.33
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T4 Expected value: 5.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T9 Expected value: 7.00
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T4 Expected value: 5.67
+[RATIONALE] Chosen Task: T4
+A1 u=7
+[RATIONALE] Task: T0 Old value: 6.33 New Value: 7.00
+[RATIONALE] Total value: 47.00
+A2 u=-1
+[RATIONALE] Task: T4 Old value: 5.00 New Value: -1.00
+[RATIONALE] Total value: 28.00
+A3 u=4
+[RATIONALE] Task: T9 Old value: 7.00 New Value: 4.00
+[RATIONALE] Total value: 32.00
+A4 u=7
+[RATIONALE] Task: T4 Old value: 5.67 New Value: 7.00
+[RATIONALE] Total value: 50.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 6.43
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T9 Expected value: 5.00
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 5.25
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RATIONALE] Chosen Task: T4
+A1 u=-1
+[RATIONALE] Task: T0 Old value: 6.43 New Value: -1.00
+[RATIONALE] Total value: 46.00
+A2 u=4
+[RATIONALE] Task: T9 Old value: 5.00 New Value: 4.00
+[RATIONALE] Total value: 32.00
+A3 u=9
+[RATIONALE] Task: T7 Old value: 5.25 New Value: 9.00
+[RATIONALE] Total value: 41.00
+A4 u=4
+[RATIONALE] Task: T4 Old value: 6.00 New Value: 4.00
+[RATIONALE] Total value: 54.00
+TIK
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T9 Expected value: 4.50
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 6.00
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 5.60
+[RATIONALE] Chosen Task: T4
+A1 u=9
+[RATIONALE] Task: T4 Old value: 6.00 New Value: 9.00
+[RATIONALE] Total value: 55.00
+A2 u=3
+[RATIONALE] Task: T9 Old value: 4.50 New Value: 3.00
+[RATIONALE] Total value: 35.00
+A3 u=0
+[RATIONALE] Task: T7 Old value: 6.00 New Value: 0.00
+[RATIONALE] Total value: 41.00
+A4 u=8
+[RATIONALE] Task: T4 Old value: 5.60 New Value: 8.00
+[RATIONALE] Total value: 62.00
+TIK
+[RATIONALE] Max task: T4 Expected value: 9.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T9 Expected value: 4.00
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T5 Expected value: 5.00
+[RATIONALE] Chosen Task: T5
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RATIONALE] Chosen Task: T4
+A1 u=7
+[RATIONALE] Task: T4 Old value: 9.00 New Value: 7.00
+[RATIONALE] Total value: 62.00
+A2 u=7
+[RATIONALE] Task: T9 Old value: 4.00 New Value: 7.00
+[RATIONALE] Total value: 42.00
+A3 u=-1
+[RATIONALE] Task: T5 Old value: 5.00 New Value: -1.00
+[RATIONALE] Total value: 40.00
+A4 u=-2
+[RATIONALE] Task: T4 Old value: 6.00 New Value: -2.00
+[RATIONALE] Total value: 60.00
+TIK
+[RATIONALE] Max task: T4 Expected value: 8.00
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T9 Expected value: 4.75
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 5.00
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T7 Expected value: 5.00
+[RATIONALE] Chosen Task: T7
+A1 u=6
+[RATIONALE] Task: T4 Old value: 8.00 New Value: 6.00
+[RATIONALE] Total value: 68.00
+A2 u=3
+[RATIONALE] Task: T9 Old value: 4.75 New Value: 3.00
+[RATIONALE] Total value: 45.00
+A3 u=5
+[RATIONALE] Task: T7 Old value: 5.00 New Value: 5.00
+[RATIONALE] Total value: 45.00
+A4 u=0
+[RATIONALE] Task: T7 Old value: 5.00 New Value: 0.00
+[RATIONALE] Total value: 60.00
+TIK
+[RATIONALE] Max task: T4 Expected value: 7.33
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T9 Expected value: 4.40
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 5.00
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T9 Expected value: 5.00
+[RATIONALE] Chosen Task: T9
+A1 u=3
+[RATIONALE] Task: T4 Old value: 7.33 New Value: 3.00
+[RATIONALE] Total value: 71.00
+A2 u=5
+[RATIONALE] Task: T9 Old value: 4.40 New Value: 5.00
+[RATIONALE] Total value: 50.00
+A3 u=4
+[RATIONALE] Task: T7 Old value: 5.00 New Value: 4.00
+[RATIONALE] Total value: 49.00
+A4 u=4
+[RATIONALE] Task: T9 Old value: 5.00 New Value: 4.00
+[RATIONALE] Total value: 64.00
+TIK
+[RATIONALE] Max task: T4 Expected value: 6.25
+[RATIONALE] Chosen Task: T4
+[RATIONALE] Max task: T9 Expected value: 4.50
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 4.88
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 4.86
+[RATIONALE] Chosen Task: T4
+A1 u=-2
+[RATIONALE] Task: T4 Old value: 6.25 New Value: -2.00
+[RATIONALE] Total value: 69.00
+A2 u=3
+[RATIONALE] Task: T9 Old value: 4.50 New Value: 3.00
+[RATIONALE] Total value: 53.00
+A3 u=4
+[RATIONALE] Task: T7 Old value: 4.88 New Value: 4.00
+[RATIONALE] Total value: 53.00
+A4 u=5
+[RATIONALE] Task: T4 Old value: 4.86 New Value: 5.00
+[RATIONALE] Total value: 69.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 5.50
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T9 Expected value: 4.29
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 4.78
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 4.88
+[RATIONALE] Chosen Task: T4
+A1 u=8
+[RATIONALE] Task: T0 Old value: 5.50 New Value: 8.00
+[RATIONALE] Total value: 77.00
+A2 u=3
+[RATIONALE] Task: T9 Old value: 4.29 New Value: 3.00
+[RATIONALE] Total value: 56.00
+A3 u=3
+[RATIONALE] Task: T7 Old value: 4.78 New Value: 3.00
+[RATIONALE] Total value: 56.00
+A4 u=3
+[RATIONALE] Task: T4 Old value: 4.88 New Value: 3.00
+[RATIONALE] Total value: 72.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 5.78
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T9 Expected value: 4.13
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 4.60
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 4.67
+[RATIONALE] Chosen Task: T4
+A1 u=0
+[RATIONALE] Task: T0 Old value: 5.78 New Value: 0.00
+[RATIONALE] Total value: 77.00
+A2 u=2
+[RATIONALE] Task: T9 Old value: 4.13 New Value: 2.00
+[RATIONALE] Total value: 58.00
+A3 u=-1
+[RATIONALE] Task: T7 Old value: 4.60 New Value: -1.00
+[RATIONALE] Total value: 55.00
+A4 u=3
+[RATIONALE] Task: T4 Old value: 4.67 New Value: 3.00
+[RATIONALE] Total value: 75.00
+TIK
+[RATIONALE] Max task: T0 Expected value: 5.20
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T9 Expected value: 3.89
+[RATIONALE] Chosen Task: T9
+[RATIONALE] Max task: T7 Expected value: 4.09
+[RATIONALE] Chosen Task: T7
+[RATIONALE] Max task: T4 Expected value: 4.50
+[RATIONALE] Chosen Task: T4
+A1 u=7
+[RATIONALE] Task: T0 Old value: 5.20 New Value: 7.00
+[RATIONALE] Total value: 84.00
+A2 u=7
+[RATIONALE] Task: T9 Old value: 3.89 New Value: 7.00
+[RATIONALE] Total value: 65.00
+A3 u=6
+[RATIONALE] Task: T7 Old value: 4.09 New Value: 6.00
+[RATIONALE] Total value: 61.00
+A4 u=4
+[RATIONALE] Task: T4 Old value: 4.50 New Value: 4.00
+[RATIONALE] Total value: 79.00
+state={A1={T0=5.36,T1=-2.00,T2=NA,T3=NA,T4=4.60,T5=1.00,T6=NA,T7=-1.00,T8=NA,T9=4.00},A2={T0=NA,T1=2.50,T2=NA,T3=NA,T4=3.50,T5=-2.00,T6=NA,T7=1.00,T8=NA,T9=4.20},A3={T0=0.00,T1=-1.00,T2=NA,T3=3.00,T4=0.00,T5=2.00,T6=NA,T7=4.25,T8=NA,T9=4.00},A4={T0=NA,T1=3.25,T2=NA,T3=NA,T4=4.45,T5=3.00,T6=NA,T7=2.50,T8=NA,T9=4.50}} gain=289.00

@@ -1,0 +1,161 @@
+T0 u=7
+T1 u=7
+TIK
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+T2 u=6
+TIK
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+[RATIONALE] Max task: T0 Expected value: 7.00
+[RATIONALE] Chosen Task: T0
+A1 u=3
+A2 u=5
+A3 u=7
+[ENVIRONMENT] Input: A u=5.0
+[RATIONALE] Task: T0 Old value: 7.00 New Value: 5.00
+[RATIONALE] Total value: 5.00
+[ENVIRONMENT] Input: A u=5.0
+[RATIONALE] Task: T0 Old value: 7.00 New Value: 5.00
+[RATIONALE] Total value: 5.00
+[ENVIRONMENT] Input: A u=5.0
+[RATIONALE] Task: T0 Old value: 7.00 New Value: 5.00
+[RATIONALE] Total value: 5.00
+TIK
+[RATIONALE] Max task: T1 Expected value: 7.00
+[RESTART] New Task Total Value: 49.00  Current Task Total Value: 40.00
+[RESTART] New Current Task: T1 Old Task: T0
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T1 Expected value: 7.00
+[RESTART] New Task Total Value: 49.00  Current Task Total Value: 40.00
+[RESTART] New Current Task: T1 Old Task: T0
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T1 Expected value: 7.00
+[RESTART] New Task Total Value: 49.00  Current Task Total Value: 40.00
+[RESTART] New Current Task: T1 Old Task: T0
+[RATIONALE] Chosen Task: T1
+T3 u=7
+T4 u=6
+T5 u=-1
+TIK
+[RATIONALE] Max task: T1 Expected value: 7.00
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T1 Expected value: 7.00
+[RATIONALE] Chosen Task: T1
+[RATIONALE] Max task: T1 Expected value: 7.00
+[RATIONALE] Chosen Task: T1
+A1 u=3
+A2 u=3
+A3 u=3
+[ENVIRONMENT] Input: A u=3.0
+[RATIONALE] Task: T1 Old value: 7.00 New Value: 3.00
+[RATIONALE] Total value: 8.00
+[ENVIRONMENT] Input: A u=3.0
+[RATIONALE] Task: T1 Old value: 7.00 New Value: 3.00
+[RATIONALE] Total value: 8.00
+[ENVIRONMENT] Input: A u=3.0
+[RATIONALE] Task: T1 Old value: 7.00 New Value: 3.00
+[RATIONALE] Total value: 8.00
+TIK
+[RATIONALE] Max task: T3 Expected value: 7.00
+[RESTART] New Task Total Value: 35.00  Current Task Total Value: 18.00
+[RESTART] New Current Task: T3 Old Task: T1
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T3 Expected value: 7.00
+[RESTART] New Task Total Value: 35.00  Current Task Total Value: 18.00
+[RESTART] New Current Task: T3 Old Task: T1
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T3 Expected value: 7.00
+[RESTART] New Task Total Value: 35.00  Current Task Total Value: 18.00
+[RESTART] New Current Task: T3 Old Task: T1
+[RATIONALE] Chosen Task: T3
+TIK
+[RATIONALE] Max task: T3 Expected value: 7.00
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T3 Expected value: 7.00
+[RATIONALE] Chosen Task: T3
+[RATIONALE] Max task: T3 Expected value: 7.00
+[RATIONALE] Chosen Task: T3
+A1 u=1
+A2 u=6
+A3 u=-2
+[ENVIRONMENT] Input: A u=1.6666666666666667
+[RATIONALE] Task: T3 Old value: 7.00 New Value: 1.67
+[RATIONALE] Total value: 9.67
+[ENVIRONMENT] Input: A u=1.6666666666666667
+[RATIONALE] Task: T3 Old value: 7.00 New Value: 1.67
+[RATIONALE] Total value: 9.67
+[ENVIRONMENT] Input: A u=1.6666666666666667
+[RATIONALE] Task: T3 Old value: 7.00 New Value: 1.67
+[RATIONALE] Total value: 9.67
+TIK
+[RATIONALE] Max task: T2 Expected value: 6.00
+[RESTART] New Task Total Value: 18.00  Current Task Total Value: 6.67
+[RESTART] New Current Task: T2 Old Task: T3
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T2 Expected value: 6.00
+[RESTART] New Task Total Value: 18.00  Current Task Total Value: 6.67
+[RESTART] New Current Task: T2 Old Task: T3
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T2 Expected value: 6.00
+[RESTART] New Task Total Value: 18.00  Current Task Total Value: 6.67
+[RESTART] New Current Task: T2 Old Task: T3
+[RATIONALE] Chosen Task: T2
+TIK
+[RATIONALE] Max task: T2 Expected value: 6.00
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T2 Expected value: 6.00
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T2 Expected value: 6.00
+[RATIONALE] Chosen Task: T2
+A1 u=3
+A2 u=7
+A3 u=4
+[ENVIRONMENT] Input: A u=4.666666666666667
+[RATIONALE] Task: T2 Old value: 6.00 New Value: 4.67
+[RATIONALE] Total value: 14.33
+[ENVIRONMENT] Input: A u=4.666666666666667
+[RATIONALE] Task: T2 Old value: 6.00 New Value: 4.67
+[RATIONALE] Total value: 14.33
+[ENVIRONMENT] Input: A u=4.666666666666667
+[RATIONALE] Task: T2 Old value: 6.00 New Value: 4.67
+[RATIONALE] Total value: 14.33
+TIK
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RESTART] New Task Total Value: 6.00  Current Task Total Value: 9.33
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RESTART] New Task Total Value: 6.00  Current Task Total Value: 9.33
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RESTART] New Task Total Value: 6.00  Current Task Total Value: 9.33
+[RATIONALE] Chosen Task: T2
+A1 u=4
+A2 u=5
+A3 u=7
+[ENVIRONMENT] Input: A u=5.333333333333333
+[RATIONALE] Task: T2 Old value: 4.67 New Value: 5.33
+[RATIONALE] Total value: 19.67
+[ENVIRONMENT] Input: A u=5.333333333333333
+[RATIONALE] Task: T2 Old value: 4.67 New Value: 5.33
+[RATIONALE] Total value: 19.67
+[ENVIRONMENT] Input: A u=5.333333333333333
+[RATIONALE] Task: T2 Old value: 4.67 New Value: 5.33
+[RATIONALE] Total value: 19.67
+TIK
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RESTART] New Task Total Value: 0.00  Current Task Total Value: 5.01
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RESTART] New Task Total Value: 0.00  Current Task Total Value: 5.01
+[RATIONALE] Chosen Task: T2
+[RATIONALE] Max task: T4 Expected value: 6.00
+[RESTART] New Task Total Value: 0.00  Current Task Total Value: 5.01
+[RATIONALE] Chosen Task: T2
+state={A1={T0=5.00,T1=3.00,T2=5.01,T3=1.67,T4=NA,T5=NA},A2={T0=5.00,T1=3.00,T2=5.01,T3=1.67,T4=NA,T5=NA},A3={T0=5.00,T1=3.00,T2=5.01,T3=1.67,T4=NA,T5=NA}} gain=59.00

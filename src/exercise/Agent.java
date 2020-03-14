@@ -62,17 +62,29 @@ public class Agent {
 		}
 
 		else{
-			this.utilityValues.put(values[0], new Utility(Double.parseDouble(values[1].split("=")[1]), this.memoryFactor));
+			this.utilityValues.put(values[0], new Utility(Double.parseDouble(values[1].split("=")[1]), this.memoryFactor, values[0]));
 		}
 	}
 	
 	public void decideAndAct() {
-		if(this.currentRestart > 0) this.currentRestart--;
-		this.taskChosen = maxUtilRestart();
+		decide();
+		act();
+	}
 
+	public void decide(){
+		String newTask = maxUtilRestart().get(0).getTask();
+
+		if(!newTask.equals(this.taskChosen)){
+			this.currentRestart = this.restart;
+			this.taskChosen = newTask;
+		}
+	}
+
+	public void act(){
 		this.cycle--;
 		this.cyclesPassed++;
 		if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Chosen Task: %s", this.taskChosen));
+		if(this.currentRestart > 0) this.currentRestart--;
 	}
 	
 	public String recharge() { return getOutput(); }
@@ -83,10 +95,41 @@ public class Agent {
 	/******************************/
 	/**** C: UTILITY FUNCTIONS*****/
 	/******************************/
-	
+
+	public ArrayList<Utility> maxUtil(){
+		ArrayList<Utility> utilities = new ArrayList<>();
+		for (String key: this.utilityValues.keySet()) {
+			utilities.add(this.utilityValues.get(key));
+		}
+
+		Comparator<Utility> comparator = new Comparator<Utility>() {
+			@Override
+			public int compare(Utility o1, Utility o2) {
+				double o1Value = o1.getExpectedValue();
+				double o2Value = o2.getExpectedValue();
+
+				if(o1Value > o2Value){
+					return -1;
+				}
+				else if(o1Value == o2Value){
+					if (o1.getTask().compareTo(o2.getTask()) > 0){
+						return 1;
+					}
+					else return -1;
+				}
+				else return 1;
+			}
+		};
+
+		utilities.sort(comparator);
+
+
+		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Max task: %s Expected value: %.2f", utilities.get(0).getTask(), utilities.get(0).getExpectedValue()));
+		return utilities;
+	}
+	/*
 	public String maxUtil(){
 		String taskChosen = "blank";
-
 		double maxValue = Float.NEGATIVE_INFINITY;
 		double currentValue;
 		for (String key: this.utilityValues.keySet()) {
@@ -103,7 +146,26 @@ public class Agent {
 		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Max task: %s Expected value: %.2f", taskChosen, maxValue));
 		return taskChosen;
 	}
+	*/
 
+	public ArrayList<Utility> maxUtilRestart(){
+		ArrayList<Utility> maxUtilArray = maxUtil();
+		if(this.taskChosen == null || this.restart == 0 || this.taskChosen.equals(maxUtilArray.get(0).getTask())){
+			return maxUtilArray;
+		}
+
+		else{
+			RestartComparator comparator = new RestartComparator(cycle, this.restart, this.currentRestart, this.taskChosen);
+
+			maxUtilArray.sort(comparator);
+
+			if(debugging) System.out.println(String.format(Locale.US,"[RESTART] Max Value Task: %s Current Task: %s", maxUtilArray.get(0).getTask(), this.taskChosen));
+
+			return maxUtilArray;
+		}
+	}
+
+	/*
 	public String maxUtilRestart(){
 		String maxUtilTask = maxUtil();
 		if(this.taskChosen == null || this.restart == 0 || this.taskChosen.equals(maxUtilTask)){
@@ -114,12 +176,15 @@ public class Agent {
 
 
 			double maxUtilRestartValue =  this.utilityValues.get(maxUtilTask).simulateRestart(cycle, this.restart);   //calculateRestart(this.utilityValues.get(maxUtilTask), this.restart-1);
-			double currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(cycle, this.currentRestart);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
-			if(debugging) System.out.println(String.format(Locale.US, "[RESTART] New Task Total Value: %.2f  Current Task Total Value: %.2f", maxUtilRestartValue, currentUtilValue));
+			double currentUtilValue;
+			if(this.currentRestart > 0){
+				 currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(cycle, this.currentRestart-1);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
+			}
+			else currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(cycle, 0);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
+
 
 			if( maxUtilRestartValue > currentUtilValue){
 				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Current Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
-				this.currentRestart = this.restart;
 				return maxUtilTask;
 			}
 
@@ -130,7 +195,8 @@ public class Agent {
 			else return this.taskChosen;
 		}
 	}
-	
+	*/
+
 	/******************************/
 	/******* D: AUX FUNCTIONS******/
 	/******************************/

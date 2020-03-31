@@ -54,9 +54,9 @@ public class Agent {
 	
 	public void perceive(String input) {
 		String[] values = input.split(" ");
+		double utilityValue = Double.parseDouble(values[1].split("=")[1]);
 
 		if(values[0].equals("A")){
-			double utilityValue = Double.parseDouble(values[1].split("=")[1]);
 			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen, this.utilityValues.get(this.taskChosen).getExpectedValue(), utilityValue));
 
 			this.utilityValues.get(this.taskChosen).addObservation(utilityValue, this.cyclesPassed);
@@ -65,8 +65,15 @@ public class Agent {
 			if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Total value: %.2f", this.total));
 		}
 
+		else if(values[0].matches("T.*")){
+			this.utilityValues.put(values[0], new Utility(utilityValue, this.memoryFactor, values[0]));
+		}
+
 		else{
-			this.utilityValues.put(values[0], new Utility(Double.parseDouble(values[1].split("=")[1]), this.memoryFactor, values[0]));
+			if(debugging) System.out.println(String.format("[HOMOGENEOUS] Task Observed %s Value Observed: %.2f",values[0].split("_")[1], utilityValue));
+
+			this.utilityValues.get(values[0].split("_")[1]).addObservation(utilityValue, this.cyclesPassed);
+
 		}
 	}
 	
@@ -133,29 +140,9 @@ public class Agent {
 		utilities.sort(comparator);
 
 
-		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Max task: %s Expected value: %.2f", utilities.get(0).getTask(), utilities.get(0).getExpectedValue()));
+		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Chosen task: %s Expected value: %.2f", utilities.get(0).getTask(), utilities.get(0).getExpectedValue()));
 		return utilities;
 	}
-	/*
-	public String maxUtil(){
-		String taskChosen = "blank";
-		double maxValue = Float.NEGATIVE_INFINITY;
-		double currentValue;
-		for (String key: this.utilityValues.keySet()) {
-			currentValue = this.utilityValues.get(key).getExpectedValue();
-			if (currentValue > maxValue){
-				maxValue = currentValue;
-				taskChosen = key;
-			}
-			else if (currentValue == maxValue && taskChosen.compareTo(key) > 0){
-				taskChosen = key;
-			}
-		}
-
-		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Max task: %s Expected value: %.2f", taskChosen, maxValue));
-		return taskChosen;
-	}
-	*/
 
 	public ArrayList<Utility> maxUtilRestart(){
 		ArrayList<Utility> maxUtilArray = maxUtil();
@@ -173,38 +160,6 @@ public class Agent {
 			return maxUtilArray;
 		}
 	}
-
-	/*
-	public String maxUtilRestart(){
-		String maxUtilTask = maxUtil();
-		if(this.taskChosen == null || this.restart == 0 || this.taskChosen.equals(maxUtilTask)){
-			return maxUtilTask;
-		}
-
-		else{
-
-
-			double maxUtilRestartValue =  this.utilityValues.get(maxUtilTask).simulateRestart(cycle, this.restart);   //calculateRestart(this.utilityValues.get(maxUtilTask), this.restart-1);
-			double currentUtilValue;
-			if(this.currentRestart > 0){
-				 currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(cycle, this.currentRestart-1);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
-			}
-			else currentUtilValue = this.utilityValues.get(this.taskChosen).simulateRestart(cycle, 0);//calculateRestart(this.utilityValues.get(this.taskChosen), 0);
-
-
-			if( maxUtilRestartValue > currentUtilValue){
-				if(debugging) System.out.println(String.format(Locale.US,"[RESTART] New Current Task: %s Old Task: %s", maxUtilTask, this.taskChosen));
-				return maxUtilTask;
-			}
-
-			else if(maxUtilRestartValue == currentUtilValue){
-				return maxUtilTask.compareTo(this.taskChosen) > 0 ? this.taskChosen : maxUtilTask;
-			}
-
-			else return this.taskChosen;
-		}
-	}
-	*/
 
 	/******************************/
 	/******* D: AUX FUNCTIONS******/

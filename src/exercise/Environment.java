@@ -30,6 +30,12 @@ public class Environment {
 
     public double concurrencyPenalty = 0;
 
+    public ArrayList<String> chosenTasks;
+
+    public HashMap<String, Double> seenTaskValues = new HashMap<>();
+
+    public ArrayList<Utility> maxTasks = new ArrayList<>();
+
     public Environment(String[] options){
         initializationParse(options);
 
@@ -48,6 +54,7 @@ public class Environment {
     /**********************************/
     /******* A: MAIN FUNCTIONS ********/
     /**********************************/
+    @SuppressWarnings("unchecked")
 
     public void decideAndAct(){
 
@@ -59,116 +66,182 @@ public class Environment {
 
         else {
             ArrayList<Utility> utilities = new ArrayList<>();
-            ArrayList<String> tasks = new ArrayList<>();
-
+            this.chosenTasks = new ArrayList<>();
 
             ArrayList<ArrayList<Utility>> allUtilities = new ArrayList<>();
             for (String agent: agents.keySet()) {
+                if(debugging) System.out.println("Agent: " + agent);
                 ArrayList<Utility> maxUtils = agents.get(agent).decide();
                 allUtilities.add(maxUtils);
 
                 utilities.add(maxUtils.get(0));
-                tasks.add(maxUtils.get(0).getTask());
+                this.chosenTasks.add(maxUtils.get(0).getTask());
             }
 
-            ArrayList<String> tasksCopy = (ArrayList<String>) tasks.clone();
+            this.maxTasks = (ArrayList<Utility>) utilities.clone();
 
-            while (true){
-                //starting from the last agent
-                for(int i = agentNames.length-1; i>= 0; i--){
-                    //if a task happens more than once
-                    if(debugging) System.out.println(String.format("[CONCURRENCY] Im agent: A%d", i));
-                    if(debugging) System.out.println(String.format("[CONCURRENCY] Number of repeats: %d", Collections.frequency(tasks, tasks.get(i))));
-
-                    int numAgentsSameTask = Collections.frequency(tasks, tasks.get(i));
-                    if(numAgentsSameTask > 1){
-                        if(debugging) System.out.println(String.format("[CONCURRENCY] Repeated Task: %s", tasks.get(i)));
-                        //looking for other agent with same task
-                        for(int j = 0; j < agentNames.length; j++){
-                            //found an agent with same task which is not myself
-                            if(tasks.get(j).equals(tasks.get(i)) && j!=i){
-                                if(debugging) System.out.println(String.format("[CONCURRENCY] Agent with same task: A%d", j));
-                                if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] A%d Value: %.2f, A%d Value: %.2f", i, utilities.get(i).getExpectedValue(), j, utilities.get(j).getExpectedValue()));
-
-                                //if my expected value is less or equal to the other, need to see if I have another better value in store
-                                if(utilities.get(i).getExpectedValue() <= utilities.get(j).getExpectedValue()){
-                                    //Local maximum variables
-                                    String maxTask = tasks.get(i);
-                                    Double maxUtility = utilities.get(i).getExpectedValue();
-
-                                    //Used to obtain utility later on
-                                    int currentUtilityPosition = -1;
-                                    int maxUtilityPosition = -1;
-                                    for(Utility utility : allUtilities.get(i)){
-                                        currentUtilityPosition++;
-                                        //if it is a task that no one has taken
-                                        //And if the value is bigger than my utility - discount for each other agent
-                                        if(debugging) {
-                                            if(!tasks.contains(utility.getTask())){
-                                                System.out.println(String.format(Locale.US, "[CONCURRENCY] Max Task Utility: %.2f, Current Task Utility: %.2f", utilities.get(i).getExpectedValue()-(this.concurrencyPenalty*numAgentsSameTask), utility.getExpectedValue()));
-                                            }
-                                        }
-
-                                        if(!tasks.contains(utility.getTask()) && isWorthChange(utilities.get(i).getExpectedValue(), utility.getExpectedValue(), numAgentsSameTask)){
-                                            //if it isnt the first value higher
-                                            if(!maxTask.equals(utilities.get(i).getTask())){
-                                                if(utility.getExpectedValue() > maxUtility){
-                                                    if(debugging) System.out.println(String.format("[CONCURRENCY] Found new higher task: %s", utility.getTask() ));
-                                                    if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] New Task: %s, New Utility: %.2f", utility.getTask(), utility.getExpectedValue()));
-
-                                                    maxTask = utility.getTask();
-                                                    maxUtility = utility.getExpectedValue();
-                                                    maxUtilityPosition = currentUtilityPosition;
-                                                }
-                                            }
-                                            //if it is the first time finding a value, set local maximums
-                                            else {
-                                                if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] New Task: %s, New Utility: %.2f", utility.getTask(), utility.getExpectedValue()));
-
-                                                maxTask = utility.getTask();
-                                                maxUtility = utility.getExpectedValue();
-                                                maxUtilityPosition = currentUtilityPosition;
-
-                                            }
-
-                                        }
-                                    }
-                                    //Set new maximums (which might not have changed)
-                                    if(maxUtilityPosition != -1){
-                                        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENCY] Final Task Chosen: %s", maxTask));
-
-                                        tasks.set(i, maxTask);
-                                        utilities.set(i, allUtilities.get(i).get(maxUtilityPosition));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                //If no changes were made, exit
-                if(tasksCopy.equals(tasks)){
+            for(String tasks: this.chosenTasks){
+                if(Collections.frequency(this.chosenTasks, tasks) > 1){
+                    recursiveSearch(0, utilities, allUtilities);
                     break;
                 }
 
-                tasksCopy = (ArrayList<String>)tasks.clone();
             }
 
+            if(debugging) System.out.println("[CONCURRENT] Max utility chosen: " + printUtility(this.maxTasks));
             for(int i = 0; i < agentNames.length; i++){
                 Agent agent = agents.get(agentNames[i]);
-                agent.setProposedTask(tasks.get(i));
+                agent.setProposedTask(this.maxTasks.get(i).getTask());
                 agent.act();
+            }
+
+            for(int task = 0; task < this.chosenTasks.size(); task++){
+                chosenTasks.set(task, this.maxTasks.get(task).getTask());
             }
         }
 
     }
 
-    public boolean isWorthChange(Double currentValue, Double tryingValue, int numberOfAgents){
-        if(numberOfAgents > 2){
-            return (numberOfAgents * (currentValue-this.concurrencyPenalty)) <= ( (numberOfAgents-1) * (currentValue-this.concurrencyPenalty) + tryingValue);
+    public void recursiveSearch(int agent, ArrayList<Utility> currentTasks, ArrayList<ArrayList<Utility>> utilities){
+
+        for (Utility utility: utilities.get(agent)) {
+            currentTasks.set(agent, utility);
+
+            if(agent < currentTasks.size()-1){
+                recursiveSearch(agent+1, currentTasks, utilities);
+            }
+            else {
+                if(debugging) System.out.println(String.format("[CONCURRENT] Max utility: %s", printUtility(maxTasks)));
+                if(debugging) System.out.println(String.format("[CONCURRENT] Trying utility: %s", printUtility(currentTasks)));
+                this.maxTasks = isWorthChange(currentTasks);
+                if(debugging) System.out.println(String.format("[CONCURRENT] Chosen utility: %s\n", printUtility(maxTasks)));
+
+            }
         }
-        else{
-            return (numberOfAgents * (currentValue-this.concurrencyPenalty) <= (currentValue + tryingValue));
+    }
+
+    public String printUtility(ArrayList<Utility> utilities){
+        String print = "";
+        for (Utility utility: utilities) {
+            print += String.format(Locale.US, "%s :  %.2f, ", utility.getTask(), utility.getExpectedValue());
         }
+        return print;
+
+    }
+
+    public ArrayList<Utility> isWorthChange(ArrayList<Utility> currentTasks){
+        double currentUtilityValue = calculateValue(this.maxTasks);
+        double tryingUtilityValue = calculateValue(currentTasks);
+
+        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT] Current Utilities Value: %.2f", currentUtilityValue));
+        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT] Trying Utilities Value: %.2f", tryingUtilityValue));
+
+        if(currentUtilityValue > tryingUtilityValue){
+            return this.maxTasks;
+        }
+
+        else if(currentUtilityValue == tryingUtilityValue){
+            if(lowestChoice(this.maxTasks, currentTasks)){
+                return (ArrayList<Utility>) currentTasks.clone();
+            }
+            return this.maxTasks;
+        }
+
+        return (ArrayList<Utility>) currentTasks.clone();
+    }
+
+    public double calculateValue(ArrayList<Utility> utilities){
+        HashMap<String, Integer> tasks = new HashMap<>();
+        Double total = 0.0;
+
+        for(Utility utility: utilities){
+
+            if(!tasks.containsKey(utility.getTask())){
+                total += utility.getExpectedValue();
+                tasks.put(utility.getTask(), 1);
+            }
+            else{
+                total += (utility.getExpectedValue()-this.concurrencyPenalty);
+                tasks.replace(utility.getTask(), tasks.get(utility.getTask())+1);
+            }
+        }
+
+        for(String task : tasks.keySet()){
+            if(tasks.get(task) > 1){
+                total -= this.concurrencyPenalty;
+            }
+        }
+        return total;
+    }
+
+    public boolean lowestChoice(ArrayList<Utility> maxTasks, ArrayList<Utility> tryingTasks){
+
+        if(debugging) System.out.println("[CONCURRENT][LOWEST CHOICE] Entered lowest choice");
+        for(int agent = 0; agent < maxTasks.size()-1; agent++){
+            if(debugging) System.out.println(String.format("[CONCURRENT][LOWEST CHOICE]  Agent %d MaxTask %s CurrentTask %s", agent, maxTasks.get(agent).getTask(), tryingTasks.get(agent).getTask()));
+
+            if(tryingTasks.get(agent).getTask().compareTo(maxTasks.get(agent).getTask()) < 0){
+                if(debugging) System.out.println("[CONCURRENT][LOWEST CHOICE] Trying is lower");
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    public boolean isWorthChange(String currentTask, String tryingTask, ArrayList<Utility> utilities, ArrayList<String> tasks, Utility changeUtility, int agentIdentifier){
+        int numCurrentTask = Collections.frequency(tasks, currentTask);
+        int numTryingTask = Collections.frequency(tasks, tryingTask);
+        if(debugging) System.out.println(String.format("[CONCURRENT][WORTH_CHANGE] numCurrentTask: %d, numTryingTask: %d", numCurrentTask, numTryingTask));
+        int agent = 0;
+
+        double totalCurrent = 0.0;
+        double totalTry = 0.0;
+
+        for (Utility utility: utilities) {
+            if(agent == agentIdentifier){
+
+                totalCurrent += utility.getExpectedValue()-this.concurrencyPenalty;
+                totalTry += changeUtility.getExpectedValue()-this.concurrencyPenalty;
+            }
+            else{
+                if(utility.getTask().equals(currentTask)){
+                    totalCurrent += utility.getExpectedValue()-this.concurrencyPenalty;
+                    totalTry += utility.getExpectedValue()-this.concurrencyPenalty;
+
+                }
+                else if(utility.getTask().equals(tryingTask)){
+
+                    totalCurrent += utility.getExpectedValue()-this.concurrencyPenalty;
+                    totalTry += utility.getExpectedValue()-this.concurrencyPenalty;
+                }
+            }
+            agent++;
+        }
+
+        if(numCurrentTask == 2 && numTryingTask == 0){
+            totalTry += 2*this.concurrencyPenalty;
+        }
+
+        else if(numCurrentTask > 2 && numTryingTask == 0){
+            totalTry += this.concurrencyPenalty;
+        }
+
+        else if(numCurrentTask == 2 && numTryingTask > 0){
+            totalTry += this.concurrencyPenalty;
+        }
+
+        if(numTryingTask == 1){
+            totalCurrent += this.concurrencyPenalty;
+        }
+
+        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT][WORTH_CHANGE] Total Current Value: %.2f, Total Trying Value: %.2f", totalCurrent, totalTry));
+
+        if(totalCurrent == totalTry){
+           return currentTask.compareTo(tryingTask) < 0;
+        }
+        return totalCurrent<=totalTry;
     }
 
     public void perceive(String line){
@@ -180,19 +253,66 @@ public class Environment {
                     this.agents.get(commandSplit[0]).perceive("A ".concat(commandSplit[1]));
                     break;
                 case "homogeneous-society":
-                    this.totalUtilitiesSeen++;
-                    this.averageUtilities += Double.parseDouble(commandSplit[1].split("=")[1]);
+                    if(concurrencyPenalty != 0){
+                        //Get task of this agent
+                        Integer agentNumber = Integer.parseInt(commandSplit[0].split("A")[1]);
+                        String task = this.chosenTasks.get(agentNumber-1);
+                        Double valueSeen = Double.parseDouble(commandSplit[1].split("=")[1]);
 
-                    if(this.totalUtilitiesSeen == this.numAgents){
-                        this.averageUtilities = this.averageUtilities / this.numAgents;
-                        for (String agent: agents.keySet()){
-                            String input = "A u=" + this.averageUtilities;
-                            if(debugging) System.out.println(String.format(Locale.US,"[ENVIRONMENT] Input: %s", input));
-                            agents.get(agent).perceive("A u=" + this.averageUtilities);
+                        //If first time seeing the task, add value to the dictionary
+                        if(!seenTaskValues.containsKey(task)){
+                            seenTaskValues.put(task, valueSeen);
                         }
-                        this.averageUtilities = 0;
-                        this.totalUtilitiesSeen = 0;
+                        else{
+                            //Else, add the value;
+                            seenTaskValues.replace(task, seenTaskValues.get(task) + valueSeen);
+                        }
+
+                        if(agentNumber == agentNames.length){
+                            for(String currentTask: seenTaskValues.keySet()){
+                                Double currentTaskValue = this.seenTaskValues.get(currentTask);
+                                int occurrences = Collections.frequency(this.chosenTasks, currentTask);
+                                Double valueObserver = currentTaskValue / occurrences;
+                                String chosenTaskInput = "A u=" + valueObserver;
+                                String observingTaskInput = String.format(Locale.US, "observation_%s u=%.2f", currentTask, valueObserver);
+
+                                int currentAgent = 0;
+                                //WARNING - Admiting it is the correct order of agents
+                                for(String agent: agents.keySet()){
+                                    if(debugging) System.out.println(String.format("[HOMOGENEOUS] Agent %s", agent));
+
+                                    if(chosenTasks.get(currentAgent).equals(currentTask)){
+                                        agents.get(agent).perceive(chosenTaskInput);
+                                    }
+                                    else{
+                                        agents.get(agent).perceive(observingTaskInput);
+                                    }
+                                    currentAgent++;
+                                }
+                            }
+
+
+                            seenTaskValues = new HashMap<>();
+                        }
                     }
+
+                    else{
+                        this.totalUtilitiesSeen++;
+                        this.averageUtilities += Double.parseDouble(commandSplit[1].split("=")[1]);
+
+                        if(this.totalUtilitiesSeen == this.numAgents){
+                            this.averageUtilities = this.averageUtilities / this.numAgents;
+                            for (String agent: agents.keySet()){
+                                String input = "A u=" + this.averageUtilities;
+                                if(debugging) System.out.println(String.format(Locale.US,"[ENVIRONMENT] Input: %s", input));
+                                agents.get(agent).perceive("A u=" + this.averageUtilities);
+                            }
+                            this.averageUtilities = 0;
+                            this.totalUtilitiesSeen = 0;
+                        }
+                    }
+
+
                     break;
 
                 default:

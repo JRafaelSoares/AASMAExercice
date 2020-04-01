@@ -14,13 +14,13 @@ public class Utility {
 
     public double memory;
 
-    public boolean debug = true;
+    public int restart;
 
-
-    public Utility(Double expectedValue, Double memory, String task){
+    public Utility(Double expectedValue, Double memory, String task, int restart){
         this.expectedValue = expectedValue;
         this.memory = memory;
         this.task = task;
+        this.restart = restart;
     }
 
     public void addObservation(Double utility, int cycle){
@@ -30,10 +30,10 @@ public class Utility {
         this.expectedValue = getValuesExpectedValue(this.observedValues);
     }
 
-    public Double simulateRestart(int remainingCycles, int restart){
+    public Double simulateRestart(int remainingCycles){
 
         Double expectedValue;
-        if(restart >= remainingCycles) return 0.0;
+        if(this.restart >= remainingCycles) return 0.0;
 
         if(!observedValues.isEmpty()){
             expectedValue = getValuesExpectedValue(observedValues);
@@ -43,9 +43,23 @@ public class Utility {
             expectedValue = this.expectedValue;
         }
 
-        return expectedValue*(remainingCycles-restart);
+        return expectedValue*(remainingCycles-this.restart);
+    }
 
+    public Double simulateRestart(int remainingCycles, double councurrencyPenalty){
 
+        Double expectedValue;
+        if(this.restart >= remainingCycles) return 0.0;
+
+        if(!observedValues.isEmpty()){
+            expectedValue = getValuesExpectedValue(observedValues);
+        }
+        //If no observed value yet, we use the base expected value
+        else{
+            expectedValue = this.expectedValue;
+        }
+
+        return (expectedValue-councurrencyPenalty)*(remainingCycles-this.restart);
     }
 
     public Double getValuesExpectedValue(HashMap<Integer, Double> observedValues){
@@ -71,5 +85,14 @@ public class Utility {
     public boolean wasNotExecuted() { return observedValues.isEmpty(); }
 
     public String getTask() { return this.task; }
+
+    public void setRestart(int restart) { this.restart = restart; }
+
+    public void decrementRestart(){
+
+        if(this.restart > 0){
+            this.restart--;
+        }
+    }
 
 }

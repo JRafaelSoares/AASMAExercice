@@ -22,6 +22,8 @@ public class Environment {
 
     /******Homogeneous Variables******/
 
+    public int cycle = 0;
+
     public double averageUtilities = 0.0;
 
     public int numAgents = 1;
@@ -71,11 +73,11 @@ public class Environment {
             ArrayList<ArrayList<Utility>> allUtilities = new ArrayList<>();
             for (String agent: agents.keySet()) {
                 if(debugging) System.out.println("Agent: " + agent);
-                ArrayList<Utility> maxUtils = agents.get(agent).decide();
-                allUtilities.add(maxUtils);
+                Utility maxUtils = agents.get(agent).decide();
+                allUtilities.add(agents.get(agent).getUtilityValues());
 
-                utilities.add(maxUtils.get(0));
-                this.chosenTasks.add(maxUtils.get(0).getTask());
+                utilities.add(maxUtils);
+                this.chosenTasks.add(maxUtils.getTask());
             }
 
             this.maxTasks = (ArrayList<Utility>) utilities.clone();
@@ -85,13 +87,12 @@ public class Environment {
                     recursiveSearch(0, utilities, allUtilities);
                     break;
                 }
-
             }
 
             if(debugging) System.out.println("[CONCURRENT] Max utility chosen: " + printUtility(this.maxTasks));
             for(int i = 0; i < agentNames.length; i++){
                 Agent agent = agents.get(agentNames[i]);
-                agent.setProposedTask(this.maxTasks.get(i).getTask());
+                agent.setProposedTask(this.maxTasks.get(i));
                 agent.act();
             }
 
@@ -99,6 +100,8 @@ public class Environment {
                 chosenTasks.set(task, this.maxTasks.get(task).getTask());
             }
         }
+
+        this.cycle--;
 
     }
 
@@ -151,26 +154,24 @@ public class Environment {
     }
 
     public double calculateValue(ArrayList<Utility> utilities){
-        HashMap<String, Integer> tasks = new HashMap<>();
         Double total = 0.0;
+        ArrayList<String> tasks = new ArrayList<>();
+
+        for(Utility utility: utilities) {
+            tasks.add(utility.getTask());
+        }
 
         for(Utility utility: utilities){
 
-            if(!tasks.containsKey(utility.getTask())){
-                total += utility.getExpectedValue();
-                tasks.put(utility.getTask(), 1);
+            if(Collections.frequency(tasks, utility.getTask()) == 1){
+                total += utility.simulateRestart(this.cycle);
             }
             else{
-                total += (utility.getExpectedValue()-this.concurrencyPenalty);
-                tasks.replace(utility.getTask(), tasks.get(utility.getTask())+1);
+                total += (utility.simulateRestart(this.cycle, this.concurrencyPenalty));
             }
         }
 
-        for(String task : tasks.keySet()){
-            if(tasks.get(task) > 1){
-                total -= this.concurrencyPenalty;
-            }
-        }
+
         return total;
     }
 
@@ -180,68 +181,19 @@ public class Environment {
         for(int agent = 0; agent < maxTasks.size()-1; agent++){
             if(debugging) System.out.println(String.format("[CONCURRENT][LOWEST CHOICE]  Agent %d MaxTask %s CurrentTask %s", agent, maxTasks.get(agent).getTask(), tryingTasks.get(agent).getTask()));
 
-            if(tryingTasks.get(agent).getTask().compareTo(maxTasks.get(agent).getTask()) < 0){
-                if(debugging) System.out.println("[CONCURRENT][LOWEST CHOICE] Trying is lower");
+            if(tryingTasks.get(agent).getTask().compareTo(maxTasks.get(agent).getTask()) > 0) {
+                if(debugging) System.out.println("[CONCURRENT][LOWEST CHOICE] Trying is higher index");
+                return false;
+            }
+
+            else if(tryingTasks.get(agent).getTask().compareTo(maxTasks.get(agent).getTask()) < 0){
+                if(debugging) System.out.println("[CONCURRENT][LOWEST CHOICE] Trying is lower index");
                 return true;
             }
 
         }
 
         return false;
-    }
-
-    public boolean isWorthChange(String currentTask, String tryingTask, ArrayList<Utility> utilities, ArrayList<String> tasks, Utility changeUtility, int agentIdentifier){
-        int numCurrentTask = Collections.frequency(tasks, currentTask);
-        int numTryingTask = Collections.frequency(tasks, tryingTask);
-        if(debugging) System.out.println(String.format("[CONCURRENT][WORTH_CHANGE] numCurrentTask: %d, numTryingTask: %d", numCurrentTask, numTryingTask));
-        int agent = 0;
-
-        double totalCurrent = 0.0;
-        double totalTry = 0.0;
-
-        for (Utility utility: utilities) {
-            if(agent == agentIdentifier){
-
-                totalCurrent += utility.getExpectedValue()-this.concurrencyPenalty;
-                totalTry += changeUtility.getExpectedValue()-this.concurrencyPenalty;
-            }
-            else{
-                if(utility.getTask().equals(currentTask)){
-                    totalCurrent += utility.getExpectedValue()-this.concurrencyPenalty;
-                    totalTry += utility.getExpectedValue()-this.concurrencyPenalty;
-
-                }
-                else if(utility.getTask().equals(tryingTask)){
-
-                    totalCurrent += utility.getExpectedValue()-this.concurrencyPenalty;
-                    totalTry += utility.getExpectedValue()-this.concurrencyPenalty;
-                }
-            }
-            agent++;
-        }
-
-        if(numCurrentTask == 2 && numTryingTask == 0){
-            totalTry += 2*this.concurrencyPenalty;
-        }
-
-        else if(numCurrentTask > 2 && numTryingTask == 0){
-            totalTry += this.concurrencyPenalty;
-        }
-
-        else if(numCurrentTask == 2 && numTryingTask > 0){
-            totalTry += this.concurrencyPenalty;
-        }
-
-        if(numTryingTask == 1){
-            totalCurrent += this.concurrencyPenalty;
-        }
-
-        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT][WORTH_CHANGE] Total Current Value: %.2f, Total Trying Value: %.2f", totalCurrent, totalTry));
-
-        if(totalCurrent == totalTry){
-           return currentTask.compareTo(tryingTask) < 0;
-        }
-        return totalCurrent<=totalTry;
     }
 
     public void perceive(String line){
@@ -370,6 +322,10 @@ public class Environment {
                     break;
                 case "concurrency-penalty":
                     this.concurrencyPenalty = Double.parseDouble(initialization[1]);
+                    break;
+                case "cycle":
+                    this.cycle = Integer.parseInt(initialization[1]);
+                    agentOptions = agentOptions.concat(option.concat(" "));
                     break;
                 default:
                     agentOptions = agentOptions.concat(option.concat(" "));

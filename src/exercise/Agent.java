@@ -27,7 +27,7 @@ public class Agent {
 
 	public HashMap<String, Utility> utilityValues = new HashMap<>();
 
-	public String taskChosen = null;
+	public Utility taskChosen = null;
 
 	public double total = 0;
 
@@ -35,9 +35,7 @@ public class Agent {
 
 	public int currentRestart = 0;
 
-	public String proposedTask = null;
-
-	public ArrayList<Utility> orderedUtilityValues = new ArrayList<>();
+	public Utility proposedTask = null;
 
 	/**********************************/
 	/******** A.2: Debugging  *********/
@@ -57,16 +55,16 @@ public class Agent {
 		double utilityValue = Double.parseDouble(values[1].split("=")[1]);
 
 		if(values[0].equals("A")){
-			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen, this.utilityValues.get(this.taskChosen).getExpectedValue(), utilityValue));
+			if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Task: %s Old value: %.2f New Value: %.2f",this.taskChosen.getTask(), this.taskChosen.getExpectedValue(), utilityValue));
 
-			this.utilityValues.get(this.taskChosen).addObservation(utilityValue, this.cyclesPassed);
+			this.taskChosen.addObservation(utilityValue, this.cyclesPassed);
 
 			this.total += utilityValue;
 			if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Total value: %.2f", this.total));
 		}
 
 		else if(values[0].matches("T.*")){
-			this.utilityValues.put(values[0], new Utility(utilityValue, this.memoryFactor, values[0]));
+			this.utilityValues.put(values[0], new Utility(utilityValue, this.memoryFactor, values[0], this.restart));
 		}
 
 		else{
@@ -82,25 +80,25 @@ public class Agent {
 		act();
 	}
 
-	public ArrayList<Utility> decide(){
-		this.orderedUtilityValues = maxUtilRestart();
+	public Utility decide(){
+		this.proposedTask = maxUtilRestart();
 
-		this.proposedTask = this.orderedUtilityValues.get(0).getTask();
-
-		return this.orderedUtilityValues;
+		return this.proposedTask;
 	}
 
 	public void act(){
 
 		if(!this.proposedTask.equals(this.taskChosen)){
-			this.currentRestart = this.restart;
+			if(this.taskChosen != null){
+				this.taskChosen.setRestart(this.restart);
+			}
 			this.taskChosen = this.proposedTask;
 		}
 
 		this.cycle--;
 		this.cyclesPassed++;
-		if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Chosen Task: %s", this.taskChosen));
-		if(this.currentRestart > 0) this.currentRestart--;
+		if(debugging) System.out.println(String.format(Locale.US, "[RATIONALE] Chosen Task: %s", this.taskChosen.getTask()));
+		this.taskChosen.decrementRestart();
 	}
 	
 	public String recharge() { return getOutput(); }
@@ -112,7 +110,7 @@ public class Agent {
 	/**** C: UTILITY FUNCTIONS*****/
 	/******************************/
 
-	public ArrayList<Utility> maxUtil(){
+	public Utility maxUtil(){
 		ArrayList<Utility> utilities = new ArrayList<>();
 		for (String key: this.utilityValues.keySet()) {
 			utilities.add(this.utilityValues.get(key));
@@ -141,24 +139,44 @@ public class Agent {
 
 
 		if(debugging) System.out.println(String.format(Locale.US,"[RATIONALE] Chosen task: %s Expected value: %.2f", utilities.get(0).getTask(), utilities.get(0).getExpectedValue()));
-		return utilities;
+		return utilities.get(0);
 	}
 
-	public ArrayList<Utility> maxUtilRestart(){
-		ArrayList<Utility> maxUtilArray = maxUtil();
-		if(this.taskChosen == null || this.restart == 0 || this.taskChosen.equals(maxUtilArray.get(0).getTask())){
-			return maxUtilArray;
+	public Utility maxUtilRestart(){
+		Utility maxUtil = maxUtil();
+		if(this.taskChosen == null || this.restart == 0 || this.taskChosen.equals(maxUtil)){
+			return maxUtil;
 		}
 
 		else{
-			RestartComparator comparator = new RestartComparator(cycle, this.restart, this.currentRestart, this.taskChosen);
 
-			maxUtilArray.sort(comparator);
+			Utility maxUitlityRestart = calculateRestart();
+			if(debugging) System.out.println(String.format(Locale.US,"[RESTART] Max Value Task: %s Current Task: %s", maxUitlityRestart.getTask(), this.taskChosen.getTask()));
 
-			if(debugging) System.out.println(String.format(Locale.US,"[RESTART] Max Value Task: %s Current Task: %s", maxUtilArray.get(0).getTask(), this.taskChosen));
-
-			return maxUtilArray;
+			return maxUitlityRestart;
 		}
+	}
+
+	public Utility calculateRestart(){
+		double maxRestart = Double.NEGATIVE_INFINITY;
+		double currentUtilityRestart;
+		String maxUtility = "ZZZ";
+		for(String utility: this.utilityValues.keySet()){
+			currentUtilityRestart = this.utilityValues.get(utility).simulateRestart(this.cycle);
+
+			if(currentUtilityRestart > maxRestart){
+				maxRestart = currentUtilityRestart;
+				maxUtility = utility;
+			}
+
+			else if(currentUtilityRestart == maxRestart){
+				if( utility.compareTo(maxUtility) < 0 ){
+					maxUtility = utility;
+				}
+			}
+		}
+
+		return this.utilityValues.get(maxUtility);
 	}
 
 	/******************************/
@@ -211,11 +229,15 @@ public class Agent {
 		return this.total;
 	}
 
-	public ArrayList<Utility> getOrderedUtilityValues(){
-		return this.orderedUtilityValues;
+	public void setProposedTask(Utility task){
+		this.proposedTask = task;
 	}
 
-	public void setProposedTask(String task){
-		this.proposedTask = task;
+	public ArrayList<Utility> getUtilityValues() {
+		ArrayList<Utility> utilityList = new ArrayList<>();
+		for(String task : utilityValues.keySet()){
+			utilityList.add(utilityValues.get(task));
+		}
+		return utilityList;
 	}
 }

@@ -1,5 +1,3 @@
-package exercise;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +16,7 @@ public class Environment {
 
     public String decision;
 
-    public boolean debugging = true;
+    public boolean debugging = false;
 
     /******Homogeneous Variables******/
 
@@ -37,6 +35,10 @@ public class Environment {
     public HashMap<String, Double> seenTaskValues = new HashMap<>();
 
     public ArrayList<Utility> maxTasks = new ArrayList<>();
+
+    /******* Concurrency Penalty ****/
+
+    public ArrayList<Utility> currentTasks = new ArrayList<>();
 
     public Environment(String[] options){
         initializationParse(options);
@@ -67,33 +69,31 @@ public class Environment {
         }
 
         else {
-            ArrayList<Utility> utilities = new ArrayList<>();
-            this.chosenTasks = new ArrayList<>();
+            this.currentTasks = new ArrayList<>(agentNames.length);
+            this.chosenTasks = new ArrayList<>(agentNames.length);
 
-            ArrayList<ArrayList<Utility>> allUtilities = new ArrayList<>();
-            for (String agent: agents.keySet()) {
+            for (String agent: agentNames) {
                 if(debugging) System.out.println("Agent: " + agent);
-                Utility maxUtils = agents.get(agent).decide();
-                allUtilities.add(agents.get(agent).getUtilityValues());
 
-                utilities.add(maxUtils);
-                this.chosenTasks.add(maxUtils.getTask());
+                this.currentTasks.add(agents.get(agent).decide());
+                this.chosenTasks.add(agents.get(agent).decide().getTask());
             }
 
-            this.maxTasks = (ArrayList<Utility>) utilities.clone();
+            this.maxTasks = (ArrayList<Utility>) currentTasks.clone();
 
             for(String tasks: this.chosenTasks){
                 if(Collections.frequency(this.chosenTasks, tasks) > 1){
-                    recursiveSearch(0, utilities, allUtilities);
+
+                    recursiveSearch(0, agentNames);
+
                     break;
                 }
             }
 
             if(debugging) System.out.println("[CONCURRENT] Max utility chosen: " + printUtility(this.maxTasks));
             for(int i = 0; i < agentNames.length; i++){
-                Agent agent = agents.get(agentNames[i]);
-                agent.setProposedTask(this.maxTasks.get(i));
-                agent.act();
+                agents.get(agentNames[i]).setProposedTask(this.maxTasks.get(i));
+                agents.get(agentNames[i]).act();
             }
 
             for(int task = 0; task < this.chosenTasks.size(); task++){
@@ -102,25 +102,30 @@ public class Environment {
         }
 
         this.cycle--;
-
+        ;
     }
 
-    public void recursiveSearch(int agent, ArrayList<Utility> currentTasks, ArrayList<ArrayList<Utility>> utilities){
+    public void recursiveSearch(int agent, String[] agentNames){
+        for (Utility utility: agents.get(agentNames[agent]).getUtilityValues()) {
 
-        for (Utility utility: utilities.get(agent)) {
             currentTasks.set(agent, utility);
 
+
             if(agent < currentTasks.size()-1){
-                recursiveSearch(agent+1, currentTasks, utilities);
+                recursiveSearch(agent+1, agentNames);
             }
             else {
                 if(debugging) System.out.println(String.format("[CONCURRENT] Max utility: %s", printUtility(maxTasks)));
                 if(debugging) System.out.println(String.format("[CONCURRENT] Trying utility: %s", printUtility(currentTasks)));
-                this.maxTasks = isWorthChange(currentTasks);
+                isWorthChange(currentTasks);
                 if(debugging) System.out.println(String.format("[CONCURRENT] Chosen utility: %s\n", printUtility(maxTasks)));
-
             }
+
+
         }
+
+
+
     }
 
     public String printUtility(ArrayList<Utility> utilities){
@@ -132,34 +137,52 @@ public class Environment {
 
     }
 
-    public ArrayList<Utility> isWorthChange(ArrayList<Utility> currentTasks){
-        double currentUtilityValue = calculateValue(this.maxTasks);
-        double tryingUtilityValue = calculateValue(currentTasks);
+    @SuppressWarnings("unchecked")
+    public void isWorthChange(ArrayList<Utility> currentTasks){
 
-        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT] Current Utilities Value: %.2f", currentUtilityValue));
-        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT] Trying Utilities Value: %.2f", tryingUtilityValue));
 
-        if(currentUtilityValue > tryingUtilityValue){
-            return this.maxTasks;
+
+        Double maxValue = calculateValue(this.maxTasks);
+        Double currentValue = calculateValue(currentTasks);
+
+
+
+        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT] Current Utilities Value: %.2f", maxValue));
+        if(debugging) System.out.println(String.format(Locale.US, "[CONCURRENT] Trying Utilities Value: %.2f", currentValue));
+
+
+        if(maxValue > currentValue){
+            return;
         }
 
-        else if(currentUtilityValue == tryingUtilityValue){
+        else if(maxValue.equals(currentValue)){
             if(lowestChoice(this.maxTasks, currentTasks)){
-                return (ArrayList<Utility>) currentTasks.clone();
+                replaceMaxTask();
             }
-            return this.maxTasks;
+            return;
         }
+        replaceMaxTask();
 
-        return (ArrayList<Utility>) currentTasks.clone();
+    }
+
+    public void replaceMaxTask(){
+        for(int i = 0; i < this.currentTasks.size(); i++){
+            this.maxTasks.set(i, this.currentTasks.get(i));
+        }
     }
 
     public double calculateValue(ArrayList<Utility> utilities){
+
+
+
         Double total = 0.0;
-        ArrayList<String> tasks = new ArrayList<>();
+
+        ArrayList<String> tasks = new ArrayList<>(utilities.size());
 
         for(Utility utility: utilities) {
             tasks.add(utility.getTask());
         }
+
 
         for(Utility utility: utilities){
 
@@ -172,10 +195,12 @@ public class Environment {
         }
 
 
+
         return total;
     }
 
     public boolean lowestChoice(ArrayList<Utility> maxTasks, ArrayList<Utility> tryingTasks){
+
 
         if(debugging) System.out.println("[CONCURRENT][LOWEST CHOICE] Entered lowest choice");
         for(int agent = 0; agent < maxTasks.size()-1; agent++){
@@ -343,11 +368,20 @@ public class Environment {
         String line = br.readLine();
         Environment environment = new Environment(line.split(" "));
         while(!(line=br.readLine()).startsWith("end")) {
-            if(environment.debugging) System.out.println(line);
             if(line.startsWith("TIK")) environment.decideAndAct();
             else environment.perceive(line);
         }
         System.out.println(environment.recharge());
+
+        //Get memory usage
+        /*
+        Runtime runtime = Runtime.getRuntime();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used Memory in bytes: " + memory);
+        System.out.println("Used Memory in kilobytes: " + (memory / (1024L)));
+
+        System.out.println("Used Memory in megabytes: " + (memory / (1024L * 1024L)));
+        */
         br.close();
     }
 }
